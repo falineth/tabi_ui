@@ -1,0 +1,58 @@
+{
+    "cSpell.words": [
+        "activedescendant",
+        "Almloff",
+        "Consolas",
+        "currentcolor",
+        "dasharray",
+        "Dioxus",
+        "focusring",
+        "grayscale",
+        "haspopup",
+        "labelledby",
+        "Murgaw",
+        "Noto",
+        "nowrap",
+        "oklab",
+        "oklch",
+        "onblur",
+        "onclick",
+        "oninput",
+        "onmounted",
+        "onpointerdown",
+        "onpointermove",
+        "onpointerup",
+        "onresize",
+        "onvisible",
+        "optgroup",
+        "overscroll",
+        "pointerdown",
+        "pointermove",
+        "pointerup",
+        "Regmi",
+        "samp",
+        "Segoe",
+        "shadcn",
+        "srgb",
+        "tabi",
+        "tabindex",
+        "valuenow"
+    ],
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/.hg/store/**": true,
+        "**/node_modules/*/**": true,
+        "**/target/*/**": true
+    },
+    "tailwindCSS.experimental.classRegex": [
+        "class: \"(.*)\""
+    ],
+    "tailwindCSS.includeLanguages": {
+        "rust": "html"
+    },
+    "rust-analyzer.cargo.features": ["desktop"]
+}
