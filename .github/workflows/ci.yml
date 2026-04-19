@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install development libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libglib2.0-dev \
+            libgtk-3-dev \
+            libsoup-3.0-dev \
+            libjavascriptcoregtk-4.1-dev \
+            libwebkit2gtk-4.1-dev \
+            libxdo-dev
+
+      - name: Run tests - desktop
+        run: cargo test --verbose --features desktop
+
+      - name: Run tests - web
+        run: cargo test --verbose --features web
+
+      - name: Run lint - desktop
+        run: cargo clippy --features desktop
+
+      - name: Run lint - web
+        run: cargo clippy --features web
+
+      - name: Run code formatting
+        run: |
+          rustup component add --toolchain nightly-x86_64-unknown-linux-gnu rustfmt
+          cargo +nightly fmt --check
+
+      - name: Build - desktop
+        run: cargo build --verbose --features desktop
+
+      - name: Build - web
+        run: cargo build --verbose --features web
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Update tailwind.css
+        run: npm run tailwindcss
+
+      - name: Verify tailwind.css is up to date
+        run: git diff --exit-code assets/tailwind.css

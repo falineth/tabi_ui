@@ -57,8 +57,7 @@ pub fn BreadcrumbItem(
 
 #[component]
 pub fn BreadcrumbLink(
-    #[props(into)]
-    to: NavigationTarget,
+    #[props(into)] to: NavigationTarget,
     #[props(default)] class: String,
     #[props(extends = GlobalAttributes, extends = span)] rest: Vec<Attribute>,
     children: Element,
