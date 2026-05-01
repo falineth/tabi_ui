@@ -26,6 +26,8 @@
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
   }
 }
 @layer base {
