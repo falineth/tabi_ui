@@ -9,6 +9,7 @@ mod layout;
 mod navigation;
 mod progress_indicator;
 mod spinner;
+mod theme_style;
 
 pub use badge::*;
 pub use button::*;
@@ -19,3 +20,4 @@ pub use layout::*;
 pub use navigation::*;
 pub use progress_indicator::*;
 pub use spinner::*;
+pub use theme_style::*;
