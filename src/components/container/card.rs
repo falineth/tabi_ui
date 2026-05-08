@@ -17,7 +17,7 @@ pub fn Card(
         div {
             "data-slot": "card",
             "data-size": "{size}",
-            class: "ring-foreground/10 bg-card text-card-foreground gap-4 overflow-hidden rounded-lg text-xs/relaxed ring-1 data-[size=sm]:gap-3 *:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg group/card flex flex-col",
+            class: "ring-view-foregroundnormal/10 border-view-foregroundnormal/20 bg-view-backgroundnormal text-view-foregroundnormal gap-4 overflow-hidden rounded-sm text-xs/relaxed ring-1 data-[size=sm]:gap-3 *:[img:first-child]:rounded-t-sm *:[img:last-child]:rounded-b-sm group/card flex flex-col",
             class: if auto_padding { "py-4 has-[>img:first-child]:pt-0 data-[size=sm]:py-3" },
             class: "{class}",
             onclick: move |e| onclick.call(e),
@@ -36,7 +36,7 @@ pub fn CardHeader(
     rsx! {
         div {
             "data-slot": "card-header",
-            class: "gap-1 rounded-t-lg px-4 group-data-[size=sm]/card:px-3 [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3 group/card-header @container/card-header grid auto-rows-min items-start has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
+            class: "gap-1 rounded-t-sm px-4 group-data-[size=sm]/card:px-3 [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3 group/card-header @container/card-header grid auto-rows-min items-start has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
             class: "{class}",
             ..rest,
             {children}
@@ -121,7 +121,7 @@ pub fn CardFooter(
     rsx! {
         div {
             "data-slot": "card-footer",
-            class: "rounded-b-lg px-4 group-data-[size=sm]/card:px-3 [.border-t]:pt-4 group-data-[size=sm]/card:[.border-t]:pt-3 flex items-center",
+            class: "rounded-b-sm px-4 group-data-[size=sm]/card:px-3 [.border-t]:pt-4 group-data-[size=sm]/card:[.border-t]:pt-3 flex items-center",
             class: "{class}",
             ..rest,
             {children}
