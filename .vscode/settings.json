@@ -33,6 +33,7 @@
         "nonblock",
         "Noto",
         "nowrap",
+        "Nuxt",
         "oklab",
         "oklch",
         "onblur",
@@ -56,6 +57,7 @@
         "Segoe",
         "shadcn",
         "srgb",
+        "stylesheet",
         "tabi",
         "tabindex",
         "valuenow"
