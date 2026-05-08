@@ -32,10 +32,10 @@ jobs:
         run: cargo test --verbose --features web
 
       - name: Run lint - desktop
-        run: cargo clippy --features desktop
+        run: cargo clippy --features desktop -- -Dwarnings
 
       - name: Run lint - web
-        run: cargo clippy --features web
+        run: cargo clippy --features web -- -Dwarnings
 
       - name: Run code formatting
         run: |
@@ -45,13 +45,16 @@ jobs:
       - name: Build - desktop
         run: cargo build --verbose --features desktop
 
+      - name: Install wasm32 target
+        run: rustup target add wasm32-unknown-unknown
+
       - name: Build - web
-        run: cargo build --verbose --features web
+        run: cargo build --verbose --features web --target wasm32-unknown-unknown
 
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install npm dependencies
         run: npm ci
