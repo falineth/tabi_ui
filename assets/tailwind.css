@@ -28,6 +28,7 @@
     --color-button-backgroundnormal: #fcfcfc;
     --color-button-decorationfocus: #3daee9;
     --color-button-decorationhover: #3daee9;
+    --color-button-foregroundinactive: #707d8a;
     --color-button-foregroundnormal: #232629;
     --color-complementary-decorationfocus: #3daee9;
     --color-complementary-decorationhover: #3daee9;
@@ -35,6 +36,7 @@
     --color-view-foregroundlink: #2d7faa;
     --color-view-foregroundnormal: #232629;
     --color-window-backgroundnormal: #eff0f1;
+    --color-window-decorationfocus: #3daee9;
     --color-window-foregroundnormal: #232629;
     --color-black: #000000;
     --color-background: var(--background);
@@ -490,9 +492,6 @@
   .rounded-full {
     border-radius: calc(infinity * 1px);
   }
-  .rounded-lg {
-    border-radius: var(--radius);
-  }
   .rounded-md {
     border-radius: calc(var(--radius) - 2px);
   }
@@ -535,6 +534,12 @@
       border-color: color-mix(in oklab, var(--color-view-foregroundnormal) 20%, transparent);
     }
   }
+  .border-window-foregroundnormal\/20 {
+    border-color: color-mix(in srgb, #232629 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-window-foregroundnormal) 20%, transparent);
+    }
+  }
   .bg-background {
     background-color: var(--background);
   }
@@ -562,9 +567,6 @@
   .bg-muted {
     background-color: var(--muted);
   }
-  .bg-popover {
-    background-color: var(--popover);
-  }
   .bg-primary {
     background-color: var(--primary);
   }
@@ -582,6 +584,9 @@
   }
   .bg-view-backgroundnormal {
     background-color: var(--color-view-backgroundnormal);
+  }
+  .bg-window-backgroundnormal {
+    background-color: var(--color-window-backgroundnormal);
   }
   .bg-clip-padding {
     background-clip: padding-box;
@@ -669,9 +674,6 @@
   .text-muted-foreground {
     color: var(--muted-foreground);
   }
-  .text-popover-foreground {
-    color: var(--popover-foreground);
-  }
   .text-primary {
     color: var(--primary);
   }
@@ -708,12 +710,6 @@
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
-  .ring-foreground\/10 {
-    --tw-ring-color: var(--foreground);
-    @supports (color: color-mix(in lab, red, red)) {
-      --tw-ring-color: color-mix(in oklab, var(--foreground) 10%, transparent);
-    }
-  }
   .ring-ring\/30 {
     --tw-ring-color: var(--ring);
     @supports (color: color-mix(in lab, red, red)) {
@@ -724,6 +720,12 @@
     --tw-ring-color: color-mix(in srgb, #232629 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-ring-color: color-mix(in oklab, var(--color-view-foregroundnormal) 10%, transparent);
+    }
+  }
+  .ring-window-foregroundnormal\/10 {
+    --tw-ring-color: color-mix(in srgb, #232629 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-ring-color: color-mix(in oklab, var(--color-window-foregroundnormal) 10%, transparent);
     }
   }
   .outline-hidden {
@@ -1150,9 +1152,28 @@
       padding: calc(var(--spacing) * 0);
     }
   }
+  .data-highlighted\:border {
+    &[data-highlighted] {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+    }
+  }
+  .data-highlighted\:border-window-decorationfocus {
+    &[data-highlighted] {
+      border-color: var(--color-window-decorationfocus);
+    }
+  }
   .data-highlighted\:bg-accent {
     &[data-highlighted] {
       background-color: var(--accent);
+    }
+  }
+  .data-highlighted\:bg-window-decorationfocus\/20 {
+    &[data-highlighted] {
+      background-color: color-mix(in srgb, #3daee9 20%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-window-decorationfocus) 20%, transparent);
+      }
     }
   }
   .data-highlighted\:text-accent-foreground {
@@ -1169,9 +1190,9 @@
       }
     }
   }
-  .data-placeholder\:text-muted-foreground {
+  .data-placeholder\:text-button-foregroundinactive {
     &[data-placeholder] {
-      color: var(--muted-foreground);
+      color: var(--color-button-foregroundinactive);
     }
   }
   .data-\[chips\=true\]\:min-w-\(--anchor-width\) {

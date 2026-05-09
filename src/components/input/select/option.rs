@@ -128,7 +128,8 @@ pub fn SelectOption<T: Clone + PartialEq + 'static>(props: SelectOptionProps<T>)
         div {
             role: "option",
             id,
-            class: "data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground min-h-7 gap-2 rounded-md px-2 py-1 text-xs/relaxed [&_svg:not([class*='size-'])]:size-3.5 relative flex w-full cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+            class: "data-highlighted:bg-window-decorationfocus/20 data-highlighted:border-window-decorationfocus not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground",
+            class: "min-h-7 gap-2 rounded-sm px-2 py-1 text-xs/relaxed [&_svg:not([class*='size-'])]:size-3.5 relative flex w-full cursor-default items-center outline-hidden select-none data-highlighted:border data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
             class: if index == 0 { "combo-option option-current" } else { "combo-option" },
             class: "{class}",
             aria_selected: selected(),
