@@ -80,7 +80,7 @@ pub fn DialogOverlay(
         div {
             "data-slot": "dialog-overlay",
             "data-state": if dialog_context.open.read().eq(&true) { "open" } else { "closed" },
-            class: "hidden data-open:block data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/80 duration-100 supports-backdrop-filter:backdrop-blur-xs fixed inset-0 isolate z-50",
+            class: "hidden data-open:block data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/30 duration-100 supports-backdrop-filter:backdrop-blur-xs fixed inset-0 isolate z-50",
             class: "{class}",
             onclick: handle_dismiss_dialog,
             ..rest,
@@ -138,7 +138,8 @@ pub fn DialogContent(
             div {
                 "data-slot": "dialog-content",
                 "data-state": if dialog_context.open.read().eq(&true) { "open" } else { "closed" },
-                class: "hidden data-open:grid bg-background data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/10 max-w-[calc(100%-2rem)] gap-4 rounded-xl p-4 text-xs/relaxed ring-1 duration-100 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 outline-none",
+                class: "hidden data-open:grid data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 max-w-[calc(100%-2rem)] gap-4 rounded-sm p-4 text-xs/relaxed ring-1 border duration-100 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 outline-none",
+                class: "ring-view-foregroundnormal/10 border-view-foregroundnormal/20 bg-view-backgroundnormal",
                 class: if full_width { "w-full" },
                 onmounted: move |e| {
                     combo_element.set(Some(e.data()));
@@ -170,6 +171,7 @@ pub fn DialogHeader(
         div {
             "data-slot": "dialog-header",
             class: "gap-1 flex flex-col",
+            class: "text-window-foregroundnormal",
             class: "{class}",
             ..rest,
             {children}
@@ -203,7 +205,7 @@ pub fn DialogDescription(
     rsx! {
         div {
             "data-slot": "dialog-description",
-            class: "text-muted-foreground *:[a]:hover:text-foreground text-xs/relaxed *:[a]:underline *:[a]:underline-offset-3",
+            class: "text-view-foregroundnormal *:[a]:hover:text-view-foregroundlink text-xs/relaxed *:[a]:underline *:[a]:underline-offset-3",
             class: "{class}",
             ..rest,
             {children}

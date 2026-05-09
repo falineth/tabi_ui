@@ -32,9 +32,11 @@
     --color-complementary-decorationfocus: #3daee9;
     --color-complementary-decorationhover: #3daee9;
     --color-view-backgroundnormal: #ffffff;
+    --color-view-foregroundlink: #2d7faa;
     --color-view-foregroundnormal: #232629;
     --color-window-backgroundnormal: #eff0f1;
     --color-window-foregroundnormal: #232629;
+    --color-black: #000000;
     --color-background: var(--background);
     --color-foreground: var(--foreground);
   }
@@ -497,9 +499,6 @@
   .rounded-sm {
     border-radius: calc(var(--radius) - 4px);
   }
-  .rounded-xl {
-    border-radius: calc(var(--radius) + 4px);
-  }
   .rounded-t-sm {
     border-top-left-radius: calc(var(--radius) - 4px);
     border-top-right-radius: calc(var(--radius) - 4px);
@@ -538,6 +537,12 @@
   }
   .bg-background {
     background-color: var(--background);
+  }
+  .bg-black\/30 {
+    background-color: color-mix(in srgb, #000000 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-black) 30%, transparent);
+    }
   }
   .bg-button-backgroundnormal {
     background-color: var(--color-button-backgroundnormal);
@@ -678,6 +683,9 @@
   }
   .text-view-foregroundnormal {
     color: var(--color-view-foregroundnormal);
+  }
+  .text-window-foregroundnormal {
+    color: var(--color-window-foregroundnormal);
   }
   .underline-offset-4 {
     text-underline-offset: 4px;
@@ -1782,12 +1790,12 @@
       }
     }
   }
-  .\*\:\[a\]\:hover\:text-foreground {
+  .\*\:\[a\]\:hover\:text-view-foregroundlink {
     :is(& > *) {
       &:is(a) {
         &:hover {
           @media (hover: hover) {
-            color: var(--foreground);
+            color: var(--color-view-foregroundlink);
           }
         }
       }
