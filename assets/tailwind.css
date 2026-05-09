@@ -33,7 +33,11 @@
     --color-complementary-decorationfocus: #3daee9;
     --color-complementary-decorationhover: #3daee9;
     --color-view-backgroundnormal: #ffffff;
+    --color-view-decorationfocus: #3daee9;
+    --color-view-decorationhover: #3daee9;
+    --color-view-foregroundinactive: #707d8a;
     --color-view-foregroundlink: #2d7faa;
+    --color-view-foregroundnegative: #da4453;
     --color-view-foregroundnormal: #232629;
     --color-window-backgroundnormal: #eff0f1;
     --color-window-decorationfocus: #3daee9;
@@ -831,9 +835,9 @@
       color: var(--foreground);
     }
   }
-  .placeholder\:text-muted-foreground {
+  .placeholder\:text-view-foregroundinactive {
     &::placeholder {
-      color: var(--muted-foreground);
+      color: var(--color-view-foregroundinactive);
     }
   }
   .after\:absolute {
@@ -871,6 +875,13 @@
     &:hover {
       @media (hover: hover) {
         border-color: var(--color-complementary-decorationhover);
+      }
+    }
+  }
+  .hover\:border-view-decorationhover {
+    &:hover {
+      @media (hover: hover) {
+        border-color: var(--color-view-decorationhover);
       }
     }
   }
@@ -979,6 +990,11 @@
   .focus-visible\:border-ring {
     &:focus-visible {
       border-color: var(--ring);
+    }
+  }
+  .focus-visible\:border-view-decorationfocus {
+    &:focus-visible {
+      border-color: var(--color-view-decorationfocus);
     }
   }
   .focus-visible\:ring-2 {
@@ -1122,6 +1138,11 @@
       border-color: var(--destructive);
     }
   }
+  .aria-invalid\:border-view-foregroundnegative {
+    &[aria-invalid="true"] {
+      border-color: var(--color-view-foregroundnegative);
+    }
+  }
   .aria-invalid\:ring-2 {
     &[aria-invalid="true"] {
       --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
@@ -1139,6 +1160,14 @@
       --tw-ring-color: var(--destructive);
       @supports (color: color-mix(in lab, red, red)) {
         --tw-ring-color: color-mix(in oklab, var(--destructive) 20%, transparent);
+      }
+    }
+  }
+  .aria-invalid\:ring-view-foregroundnegative\/20 {
+    &[aria-invalid="true"] {
+      --tw-ring-color: color-mix(in srgb, #da4453 20%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        --tw-ring-color: color-mix(in oklab, var(--color-view-foregroundnegative) 20%, transparent);
       }
     }
   }
