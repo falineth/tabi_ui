@@ -139,14 +139,7 @@ pub fn Select<T: Clone + PartialEq + 'static>(props: SelectProps<T>) -> Element 
     });
 
     rsx! {
-        div {
-            "data-slot": "select",
-            class: "w-auto",
-            class: "{class}",
-            tabindex: 0,
-            ..rest,
-            {children}
-        }
+        div { "data-slot": "select", class: "w-auto", class: "{class}", ..rest, {children} }
         PortalOut { portal }
     }
 }
