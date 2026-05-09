@@ -19,7 +19,9 @@ pub fn TextArea(
     rsx! {
         textarea {
             "data-slot": "textarea",
-            class: "border-input bg-input/20 dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 resize-none rounded-md border px-2 py-2 text-sm transition-colors focus-visible:ring-2 aria-invalid:ring-2 md:text-xs/relaxed placeholder:text-muted-foreground flex field-sizing-content min-h-16 w-full outline-none disabled:cursor-not-allowed disabled:opacity-50",
+            class: "border-view-foregroundnormal/20 bg-view-backgroundnormal hover:border-view-decorationhover focus-visible:border-view-decorationfocus placeholder:text-view-foregroundinactive",
+            class: "aria-invalid:ring-view-foregroundnegative/20 aria-invalid:border-view-foregroundnegative",
+            class: "resize-none rounded-sm border px-2 py-2 text-sm transition-colors aria-invalid:ring-2 md:text-xs/relaxed flex field-sizing-content min-h-16 w-full outline-none disabled:cursor-not-allowed disabled:opacity-50",
             class: "{class}",
             value,
             oninput: move |e| set_value_internal(e.data.value()),
