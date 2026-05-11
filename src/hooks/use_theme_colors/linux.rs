@@ -6,6 +6,7 @@ use dbus::nonblock::{MsgMatch, SyncConnection};
 use dioxus::prelude::*;
 
 const DEFAULT_THEME: &str = include_str!("../../../assets/default_theme.css");
+const DEFAULT_WINDOW_BACKGROUND: (u8, u8, u8, u8) = (0xEF, 0xF0, 0xF1, 0xFF);
 const KDE_COLOUR_CONFIG: &str = "kdeglobals";
 
 pub fn use_theme_colors() -> ReadSignal<String, SyncStorage> {
@@ -57,6 +58,39 @@ fn use_dbus_theme_event_listener(mut theme_colors: Signal<String, SyncStorage>) 
         dbus_conn.set(Some(conn));
         dbus_incoming_signal.set(Some(incoming_signal));
     });
+}
+
+pub fn get_window_background_color() -> (u8, u8, u8, u8) {
+    let Some(config_dir) = dirs::config_dir() else {
+        return DEFAULT_WINDOW_BACKGROUND;
+    };
+
+    let color_config_path = config_dir.join(KDE_COLOUR_CONFIG);
+
+    let Ok(mut color_data) = read_to_string(&color_config_path) else {
+        return DEFAULT_WINDOW_BACKGROUND;
+    };
+
+    color_data.make_ascii_lowercase();
+
+    let mut current_color_section: Option<&str> = None;
+
+    for line in color_data.lines() {
+        if let Some(section_name) = as_config_section_name(line) {
+            current_color_section = as_color_section_name(section_name);
+            continue;
+        }
+
+        if !matches!(current_color_section, Some("window")) {
+            continue;
+        }
+
+        if let Some(css_color_value) = as_css_color_tuple_for_key(line, "backgroundnormal") {
+            return css_color_value;
+        }
+    }
+
+    return DEFAULT_WINDOW_BACKGROUND;
 }
 
 fn get_theme_colors() -> String {
@@ -112,6 +146,26 @@ fn as_color_section_name(section_name: &str) -> Option<&str> {
     }
 
     return Some(section_name);
+}
+
+fn as_css_color_tuple_for_key(line: &str, wanted_key: &str) -> Option<(u8, u8, u8, u8)> {
+    let (key, value) = line.split_once("=")?;
+
+    if key != wanted_key {
+        return None;
+    }
+
+    let (r, g_b) = value.split_once(",")?;
+
+    let r = r.parse::<u8>().ok()?;
+
+    let (g, b) = g_b.split_once(",")?;
+
+    let g = g.parse::<u8>().ok()?;
+
+    let b = b.parse::<u8>().ok()?;
+
+    return Some((r, g, b, 0xFF));
 }
 
 fn as_css_color_value(line: &str, theme_section_name: &str) -> Option<String> {

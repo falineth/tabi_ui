@@ -5,16 +5,32 @@ use tabi_ui::*;
 
 const TAILWIND_CSS: Asset = asset!("../assets/tailwind.css");
 
-fn main() {
+#[cfg(feature = "desktop")]
+fn launch_app() {
+    use dioxus::desktop::{Config, WindowBuilder};
+
+    let mut config = Config::default()
+        .with_background_color(get_window_background_color())
+        .with_window(WindowBuilder::new().with_title("Component Example"));
+
+    if cfg!(not(debug_assertions)) {
+        config = config.with_menu(None);
+    }
+
+    LaunchBuilder::new().with_cfg(config).launch(App);
+}
+
+#[cfg(feature = "web")]
+fn launch_app() {
     dioxus::launch(App);
+}
+
+fn main() {
+    launch_app();
 }
 
 #[component]
 fn App() -> Element {
-    let mut window_size = use_context_provider(|| Signal::new(WindowSize::default()));
-
-    use_context_provider(|| Signal::new(ModalOffset::default()));
-
     let role_list = use_store(|| {
         vec![
             "Developer".to_owned(),
@@ -47,20 +63,7 @@ fn App() -> Element {
     rsx! {
         document::Link { rel: "stylesheet", href: TAILWIND_CSS }
 
-        ThemeStyle {}
-
-        div {
-            class: "flex flex-wrap",
-            onresize: move |e| {
-                if let Ok(size) = e.get_content_box_size() {
-                    window_size
-                        .set(WindowSize {
-                            width: size.width,
-                            height: size.height,
-                        });
-                }
-            },
-
+        TabiDefaultContext { class: "flex flex-wrap",
             div { class: "p-4",
                 Card { class: "relative w-full max-w-sm overflow-hidden pt-0",
                     div { class: "bg-primary absolute inset-0 z-30 aspect-video opacity-50 mix-blend-color" }
