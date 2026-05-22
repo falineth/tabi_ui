@@ -1,7 +1,8 @@
 #![allow(clippy::needless_return)]
 
-mod components;
+pub mod components;
 mod hooks;
+pub mod icons;
 mod macros;
 mod utils;
 
