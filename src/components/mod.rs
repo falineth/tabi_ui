@@ -15,6 +15,7 @@ pub use badge::*;
 pub use button::*;
 pub use container::*;
 pub use dialog::*;
+pub use dioxus_free_icons::Icon;
 pub use input::*;
 pub use layout::*;
 pub use navigation::*;
