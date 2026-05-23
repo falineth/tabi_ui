@@ -2,7 +2,16 @@ use dioxus::prelude::*;
 use dioxus_free_icons::Icon;
 use dioxus_free_icons::icons::bs_icons::{BsChevronRight, BsThreeDots};
 
-//use crate::Route;
+#[component]
+pub fn BreadcrumbBar(#[props(default)] class: String, children: Element) -> Element {
+    rsx! {
+        div {
+            class: "flex px-4 items-center h-12 w-full border-b",
+            class: "border-window-foregroundnormal/20",
+            {children}
+        }
+    }
+}
 
 #[component]
 pub fn Breadcrumb(
@@ -47,7 +56,7 @@ pub fn BreadcrumbItem(
     rsx! {
         li {
             "data-slot": "breadcrumb-item",
-            class: "gap-1 inline-flex items-center",
+            class: "gap-1 inline-flex items-center text-lg",
             class: "{class}",
             ..rest,
             {children}
@@ -66,7 +75,7 @@ pub fn BreadcrumbLink(
         Link { to,
             span {
                 "data-slot": "breadcrumb-item",
-                class: "hover:text-foreground transition-colors",
+                class: "hover:text-foreground transition-colors text-lg",
                 class: "{class}",
                 ..rest,
                 {children}
