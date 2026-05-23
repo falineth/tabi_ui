@@ -14,6 +14,8 @@
     --text-xs--line-height: calc(1 / 0.75);
     --text-sm: 0.875rem;
     --text-sm--line-height: calc(1.25 / 0.875);
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --leading-relaxed: 1.625;
@@ -359,6 +361,9 @@
   .h-8 {
     height: calc(var(--spacing) * 8);
   }
+  .h-12 {
+    height: calc(var(--spacing) * 12);
+  }
   .h-96 {
     height: calc(var(--spacing) * 96);
   }
@@ -382,6 +387,18 @@
   }
   .w-\(--anchor-width\) {
     width: var(--anchor-width);
+  }
+  .w-7 {
+    width: calc(var(--spacing) * 7);
+  }
+  .w-8 {
+    width: calc(var(--spacing) * 8);
+  }
+  .w-12 {
+    width: calc(var(--spacing) * 12);
+  }
+  .w-44 {
+    width: calc(var(--spacing) * 44);
   }
   .w-96 {
     width: calc(var(--spacing) * 96);
@@ -487,6 +504,9 @@
   .justify-end {
     justify-content: flex-end;
   }
+  .justify-start {
+    justify-content: flex-start;
+  }
   .gap-1 {
     gap: calc(var(--spacing) * 1);
   }
@@ -504,6 +524,11 @@
   }
   .justify-self-end {
     justify-self: flex-end;
+  }
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .overflow-hidden {
     overflow: hidden;
@@ -537,6 +562,14 @@
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+  .border-r {
+    border-right-style: var(--tw-border-style);
+    border-right-width: 1px;
+  }
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
   }
   .border-border {
     border-color: rgba(var(--color-window-foregroundnormal), 0.2);
@@ -625,6 +658,9 @@
   .p-1 {
     padding: calc(var(--spacing) * 1);
   }
+  .p-2 {
+    padding: calc(var(--spacing) * 2);
+  }
   .p-4 {
     padding: calc(var(--spacing) * 4);
   }
@@ -655,11 +691,21 @@
   .py-4 {
     padding-block: calc(var(--spacing) * 4);
   }
+  .ps-0 {
+    padding-inline-start: calc(var(--spacing) * 0);
+  }
+  .pe-0 {
+    padding-inline-end: calc(var(--spacing) * 0);
+  }
   .pt-0 {
     padding-top: calc(var(--spacing) * 0);
   }
   .text-left {
     text-align: left;
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
   }
   .text-sm {
     font-size: var(--text-sm);
