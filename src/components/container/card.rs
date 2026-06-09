@@ -17,8 +17,8 @@ pub fn Card(
         div {
             "data-slot": "card",
             "data-size": "{size}",
-            class: "ring-view-foregroundnormal/10 border-view-foregroundnormal/20 bg-view-backgroundnormal text-view-foregroundnormal",
-            class: "gap-4 overflow-hidden rounded-sm text-xs/relaxed ring-1 border data-[size=sm]:gap-3 *:[img:first-child]:rounded-t-sm *:[img:last-child]:rounded-b-sm group/card flex flex-col",
+            class: "ring-view-foregroundnormal/5 border-view-foregroundnormal/20 bg-view-backgroundnormal text-view-foregroundnormal",
+            class: "gap-4 rounded-sm text-xs/relaxed ring-1 border data-[size=sm]:gap-3 *:[img:first-child]:rounded-t-sm *:[img:last-child]:rounded-b-sm group/card flex flex-col",
             class: if auto_padding { "py-4 has-[>img:first-child]:pt-0 data-[size=sm]:py-3" },
             class: "{class}",
             onclick: move |e| onclick.call(e),

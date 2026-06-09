@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use dioxus::prelude::*;
 
-use crate::{ModalOffset, ThemeStyle, WindowSize};
+use crate::{ThemeStyle, WindowSize};
 
 /// # TabiDefaultContext
 ///
@@ -47,8 +47,6 @@ use crate::{ModalOffset, ThemeStyle, WindowSize};
 #[component]
 pub fn TabiDefaultContext(#[props(default)] class: String, children: Element) -> Element {
     let mut window_size = use_context_provider(|| Signal::new(WindowSize::default()));
-
-    use_context_provider(|| Signal::new(ModalOffset::default()));
 
     let mut loaded = use_signal(bool::default);
 

@@ -63,7 +63,7 @@ fn App() -> Element {
     rsx! {
         document::Link { rel: "stylesheet", href: TAILWIND_CSS }
 
-        TabiDefaultContext { class: "flex flex-wrap",
+        TabiDefaultContext { class: "flex flex-wrap h-lvh",
             div { class: "p-4",
                 Card { class: "relative w-full max-w-sm overflow-hidden pt-0",
                     div { class: "bg-primary absolute inset-0 z-30 aspect-video opacity-50 mix-blend-color" }
