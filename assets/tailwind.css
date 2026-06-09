@@ -376,17 +376,11 @@
   .max-h-72 {
     max-height: calc(var(--spacing) * 72);
   }
-  .max-h-\[min\(calc\(--spacing\(72\)---spacing\(9\)\)\,calc\(var\(--available-height\)---spacing\(9\)\)\)\] {
-    max-height: min(calc(calc(var(--spacing) * 72) - calc(var(--spacing) * 9)), calc(var(--available-height) - calc(var(--spacing) * 9)));
-  }
   .min-h-7 {
     min-height: calc(var(--spacing) * 7);
   }
   .min-h-16 {
     min-height: calc(var(--spacing) * 16);
-  }
-  .w-\(--anchor-width\) {
-    width: var(--anchor-width);
   }
   .w-7 {
     width: calc(var(--spacing) * 7);
@@ -415,9 +409,6 @@
   .w-lvw {
     width: 100lvw;
   }
-  .max-w-\(--available-width\) {
-    max-width: var(--available-width);
-  }
   .max-w-\[calc\(100\%-2rem\)\] {
     max-width: calc(100% - 2rem);
   }
@@ -436,17 +427,11 @@
   .min-w-8 {
     min-width: calc(var(--spacing) * 8);
   }
-  .min-w-\[calc\(var\(--anchor-width\)\+--spacing\(7\)\)\] {
-    min-width: calc(var(--anchor-width) + calc(var(--spacing) * 7));
-  }
   .shrink-0 {
     flex-shrink: 0;
   }
   .grow {
     flex-grow: 1;
-  }
-  .origin-\(--transform-origin\) {
-    transform-origin: var(--transform-origin);
   }
   .-translate-x-1\/2 {
     --tw-translate-x: calc(calc(1 / 2 * 100%) * -1);
@@ -790,16 +775,16 @@
       --tw-ring-color: color-mix(in oklab, var(--ring) 30%, transparent);
     }
   }
-  .ring-view-foregroundnormal\/10 {
-    --tw-ring-color: color-mix(in srgb, #232629 10%, transparent);
+  .ring-view-foregroundnormal\/5 {
+    --tw-ring-color: color-mix(in srgb, #232629 5%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
-      --tw-ring-color: color-mix(in oklab, var(--color-view-foregroundnormal) 10%, transparent);
+      --tw-ring-color: color-mix(in oklab, var(--color-view-foregroundnormal) 5%, transparent);
     }
   }
-  .ring-window-foregroundnormal\/10 {
-    --tw-ring-color: color-mix(in srgb, #232629 10%, transparent);
+  .ring-window-foregroundnormal\/5 {
+    --tw-ring-color: color-mix(in srgb, #232629 5%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
-      --tw-ring-color: color-mix(in oklab, var(--color-window-foregroundnormal) 10%, transparent);
+      --tw-ring-color: color-mix(in oklab, var(--color-window-foregroundnormal) 5%, transparent);
     }
   }
   .outline-hidden {
@@ -809,6 +794,10 @@
       outline: 2px solid transparent;
       outline-offset: 2px;
     }
+  }
+  .blur {
+    --tw-blur: blur(8px);
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
   .brightness-60 {
     --tw-brightness: brightness(60%);
@@ -837,6 +826,9 @@
     transition-property: transform, translate, scale, rotate;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-none {
+    transition-property: none;
   }
   .duration-100 {
     --tw-duration: 100ms;
@@ -1292,41 +1284,6 @@
   .data-placeholder\:text-button-foregroundinactive {
     &[data-placeholder] {
       color: var(--color-button-foregroundinactive);
-    }
-  }
-  .data-\[chips\=true\]\:min-w-\(--anchor-width\) {
-    &[data-chips="true"] {
-      min-width: var(--anchor-width);
-    }
-  }
-  .data-\[side\=bottom\]\:slide-in-from-top-2 {
-    &[data-side="bottom"] {
-      --tw-enter-translate-y: calc(2*var(--spacing)*-1);
-    }
-  }
-  .data-\[side\=inline-end\]\:slide-in-from-left-2 {
-    &[data-side="inline-end"] {
-      --tw-enter-translate-x: calc(2*var(--spacing)*-1);
-    }
-  }
-  .data-\[side\=inline-start\]\:slide-in-from-right-2 {
-    &[data-side="inline-start"] {
-      --tw-enter-translate-x: calc(2*var(--spacing));
-    }
-  }
-  .data-\[side\=left\]\:slide-in-from-right-2 {
-    &[data-side="left"] {
-      --tw-enter-translate-x: calc(2*var(--spacing));
-    }
-  }
-  .data-\[side\=right\]\:slide-in-from-left-2 {
-    &[data-side="right"] {
-      --tw-enter-translate-x: calc(2*var(--spacing)*-1);
-    }
-  }
-  .data-\[side\=top\]\:slide-in-from-bottom-2 {
-    &[data-side="top"] {
-      --tw-enter-translate-y: calc(2*var(--spacing));
     }
   }
   .data-\[size\=default\]\:h-7 {

@@ -38,5 +38,5 @@ pub struct SelectContext<T: Clone + PartialEq + 'static> {
     pub list_id: Signal<Option<String>>,
     pub combo_rect: Signal<Rect<f64, Pixels>>,
     pub search_string: Signal<SearchText>,
-    pub portal: PortalId,
+    pub list_height: Signal<Option<f64>>,
 }

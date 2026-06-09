@@ -9,7 +9,7 @@ use dioxus_free_icons::icons::bs_icons::BsX;
 use crate::components::{
     Button, ButtonSize, ButtonVariant, PortalId, PortalIn, PortalOut, use_portal,
 };
-use crate::hooks::{ModalOffset, use_controlled, use_modal_offset_context, use_window_size};
+use crate::hooks::{use_controlled, use_window_size};
 
 #[derive(Clone)]
 pub struct DialogContext {
@@ -51,8 +51,6 @@ pub fn Dialog(props: DialogProps) -> Element {
         open,
         set_open,
     });
-
-    use_context_provider(|| Signal::new(ModalOffset::default()));
 
     rsx! {
         div { {children} }
@@ -99,39 +97,6 @@ pub fn DialogContent(
 ) -> Element {
     let dialog_context = use_dialog_context();
 
-    let mut modal_offset = use_modal_offset_context();
-
-    let window_size = use_window_size();
-
-    /*
-
-        Refs
-
-    */
-    let mut combo_element: Signal<Option<Rc<MountedData>>> = use_signal(|| None);
-
-    use_effect(move || {
-        if *dialog_context.open.read()
-            && combo_element.read().is_some()
-            && window_size.read().height > -1.0
-        {
-            spawn(async move {
-                if let Some(combo_element) = combo_element.read().as_ref()
-                    && let Ok(rect) = combo_element.get_client_rect().await
-                {
-                    let current_offset = modal_offset.read();
-
-                    if current_offset.x != rect.min_x() || current_offset.y != rect.min_y() {
-                        drop(current_offset);
-                        let mut modal_offset = modal_offset.write();
-                        modal_offset.x = rect.min_x();
-                        modal_offset.y = rect.min_y();
-                    }
-                }
-            });
-        }
-    });
-
     rsx! {
         PortalIn { portal: dialog_context.portal,
             DialogOverlay { allow_dismiss }
@@ -139,11 +104,8 @@ pub fn DialogContent(
                 "data-slot": "dialog-content",
                 "data-state": if dialog_context.open.read().eq(&true) { "open" } else { "closed" },
                 class: "hidden data-open:grid data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 max-w-[calc(100%-2rem)] gap-4 rounded-sm p-4 text-xs/relaxed ring-1 border duration-100 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 outline-none",
-                class: "ring-view-foregroundnormal/10 border-view-foregroundnormal/20 bg-view-backgroundnormal",
+                class: "ring-view-foregroundnormal/5 border-view-foregroundnormal/20 bg-view-backgroundnormal",
                 class: if full_width { "w-full" },
-                onmounted: move |e| {
-                    combo_element.set(Some(e.data()));
-                },
                 ..rest,
                 {children}
                 DialogClose {

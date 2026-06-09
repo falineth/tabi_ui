@@ -75,10 +75,11 @@ pub fn Select<T: Clone + PartialEq + 'static>(props: SelectProps<T>) -> Element 
        State
 
     */
-    let active_value: Signal<Option<OptionState<T>>> = use_signal(|| None);
+    let active_value: Signal<Option<OptionState<T>>> = use_signal(Option::default);
     let options: Signal<Vec<OptionState<T>>> = use_signal(Vec::default);
-    let mut menu_open: Signal<bool> = use_signal(|| false);
-    let list_id: Signal<Option<String>> = use_signal(|| None);
+    let mut menu_open: Signal<bool> = use_signal(bool::default);
+    let list_id: Signal<Option<String>> = use_signal(Option::default);
+    let list_height: Signal<Option<f64>> = use_signal(Option::default);
     let combo_rect: Signal<Rect<f64, Pixels>> = use_signal(Rect::default);
     let search_string: Signal<SearchText> = use_signal(SearchText::default);
 
@@ -114,14 +115,6 @@ pub fn Select<T: Clone + PartialEq + 'static>(props: SelectProps<T>) -> Element 
 
     /*
 
-       Hooks
-
-    */
-
-    let portal = use_portal();
-
-    /*
-
        Context
 
     */
@@ -133,13 +126,18 @@ pub fn Select<T: Clone + PartialEq + 'static>(props: SelectProps<T>) -> Element 
         menu_open: menu_open.into(),
         set_menu_open,
         list_id,
+        list_height,
         combo_rect,
         search_string,
-        portal,
     });
 
     rsx! {
-        div { "data-slot": "select", class: "w-auto", class: "{class}", ..rest, {children} }
-        PortalOut { portal }
+        div {
+            "data-slot": "select",
+            class: "w-auto relative",
+            class: "{class}",
+            ..rest,
+            {children}
+        }
     }
 }
