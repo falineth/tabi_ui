@@ -1,8 +1,8 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::icons::bs_icons::{BsAlarm, BsExplicit, BsLightbulb, BsMenuApp};
-use dioxus_free_icons::{Icon, IconShape};
+use dioxus_free_icons::icons::md_navigation_icons::MdMenu;
 
-use crate::components::Button;
+use crate::components::{Button, Icon, IconShape};
+use crate::icons::MdCircle;
 
 #[component]
 pub fn DrawAction<T: IconShape + Clone + PartialEq + 'static>(
@@ -62,7 +62,7 @@ pub fn GlobalDraw(
                             {content}
                         }
                         DrawAction {
-                            icon: BsMenuApp,
+                            icon: MdMenu,
                             label: "Close Sidebar",
                             onclick: handle_toggle_open,
                         }

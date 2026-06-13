@@ -1,6 +1,8 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::Icon;
-use dioxus_free_icons::icons::bs_icons::{BsChevronRight, BsThreeDots};
+use dioxus_free_icons::icons::md_navigation_icons::{MdChevronRight, MdMoreHoriz};
+
+use crate::components::Icon;
+use crate::icons::MdCircle;
 
 #[component]
 pub fn BreadcrumbBar(#[props(default)] class: String, children: Element) -> Element {
@@ -119,7 +121,7 @@ pub fn BreadcrumbSeparator(
             class: "{class}",
             ..rest,
             if children.is_none() {
-                Icon { icon: BsChevronRight }
+                Icon { icon: MdChevronRight }
             } else {
                 {children}
             }
@@ -141,7 +143,7 @@ pub fn BreadcrumbEllipsis(
             class: "size-4 [&>svg]:size-3.5 flex items-center justify-center",
             class: "{class}",
             ..rest,
-            Icon { icon: BsThreeDots }
+            Icon { icon: MdMoreHoriz }
             span { class: "sr-only", "More" }
         }
     }

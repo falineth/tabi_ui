@@ -1,6 +1,8 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::Icon;
-use dioxus_free_icons::icons::bs_icons::BsArrowRepeat;
+use dioxus_free_icons::icons::md_action_icons::MdAutorenew;
+
+use crate::components::Icon;
+use crate::icons::MdCircle;
 
 #[component]
 pub fn Spinner(#[props(default)] class: String) -> Element {
@@ -10,7 +12,7 @@ pub fn Spinner(#[props(default)] class: String) -> Element {
             aria_label: "Loading",
             class: "{class}",
             class: "inline-block animate-spin",
-            Icon { icon: BsArrowRepeat, height: 12, width: 12 }
+            Icon { icon: MdAutorenew, height: 12, width: 12 }
         }
     }
 }
