@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::Icon;
-use dioxus_free_icons::icons::bs_icons::BsPlus;
-use tabi_ui::*;
+use tabi_ui::components::*;
+use tabi_ui::get_window_background_color;
+use tabi_ui::icons::MdAdd;
 
 const TAILWIND_CSS: Asset = asset!("../assets/tailwind.css");
 
@@ -85,7 +85,7 @@ fn App() -> Element {
                         Dialog {
                             DialogTrigger {
                                 Button {
-                                    Icon { icon: BsPlus }
+                                    Icon { icon: MdAdd }
                                     "Show Dialog"
                                 }
                             }

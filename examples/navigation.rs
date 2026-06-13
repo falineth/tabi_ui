@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
-use dioxus_free_icons::icons::bs_icons::{BsGear, BsHouse, BsInfoCircle};
-use tabi_ui::*;
+use tabi_ui::components::*;
+use tabi_ui::get_window_background_color;
+use tabi_ui::icons::{MdHome, MdInfoOutline, MdSettings};
 
 const TAILWIND_CSS: Asset = asset!("../assets/tailwind.css");
 
@@ -23,9 +24,9 @@ pub fn NavbarView() -> Element {
     rsx! {
         GlobalDraw {
             actions: rsx! {
-                DrawAction { icon: BsHouse, label: "Home", onclick: handle_goto_home }
-                DrawAction { icon: BsGear, label: "Settings", onclick: handle_goto_settings }
-                DrawAction { icon: BsInfoCircle, label: "About", onclick: handle_goto_about }
+                DrawAction { icon: MdHome, label: "Home", onclick: handle_goto_home }
+                DrawAction { icon: MdSettings, label: "Settings", onclick: handle_goto_settings }
+                DrawAction { icon: MdInfoOutline, label: "About", onclick: handle_goto_about }
             },
             content: rsx! {
                 div { class: "p-2", Slider {} }

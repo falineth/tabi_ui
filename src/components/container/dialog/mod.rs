@@ -3,13 +3,13 @@
 use std::rc::Rc;
 
 use dioxus::prelude::*;
-use dioxus_free_icons::Icon;
-use dioxus_free_icons::icons::bs_icons::BsX;
+use dioxus_free_icons::icons::md_navigation_icons::MdClose;
 
 use crate::components::{
-    Button, ButtonSize, ButtonVariant, PortalId, PortalIn, PortalOut, use_portal,
+    Button, ButtonSize, ButtonVariant, Icon, PortalId, PortalIn, PortalOut, use_portal,
 };
 use crate::hooks::{use_controlled, use_window_size};
+use crate::icons::MdCircle;
 
 #[derive(Clone)]
 pub struct DialogContext {
@@ -114,7 +114,7 @@ pub fn DialogContent(
                     Button {
                         variant: ButtonVariant::Ghost,
                         size: ButtonSize::IconSM,
-                        Icon { icon: BsX }
+                        Icon { icon: MdClose }
                         span { class: "sr-only", "Close" }
                     }
                 }
