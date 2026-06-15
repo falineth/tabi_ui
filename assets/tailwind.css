@@ -1,4 +1,4 @@
-/*! tailwindcss v4.3.0 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.3.1 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -229,10 +229,10 @@
     position: static;
   }
   .inset-0 {
-    inset: calc(var(--spacing) * 0);
+    inset: 0;
   }
   .top-0 {
-    top: calc(var(--spacing) * 0);
+    top: 0;
   }
   .top-1\/2 {
     top: calc(1 / 2 * 100%);
@@ -244,7 +244,7 @@
     right: calc(var(--spacing) * 2);
   }
   .left-0 {
-    left: calc(var(--spacing) * 0);
+    left: 0;
   }
   .left-1\/2 {
     left: calc(1 / 2 * 100%);
@@ -289,7 +289,7 @@
     }
   }
   .m-1 {
-    margin: calc(var(--spacing) * 1);
+    margin: var(--spacing);
   }
   .ml-auto {
     margin-left: auto;
@@ -416,7 +416,7 @@
     max-width: var(--container-sm);
   }
   .min-w-0 {
-    min-width: calc(var(--spacing) * 0);
+    min-width: 0;
   }
   .min-w-6 {
     min-width: calc(var(--spacing) * 6);
@@ -457,7 +457,7 @@
     resize: none;
   }
   .scroll-py-1 {
-    scroll-padding-block: calc(var(--spacing) * 1);
+    scroll-padding-block: var(--spacing);
   }
   .auto-rows-min {
     grid-auto-rows: min-content;
@@ -493,7 +493,7 @@
     justify-content: flex-start;
   }
   .gap-1 {
-    gap: calc(var(--spacing) * 1);
+    gap: var(--spacing);
   }
   .gap-1\.5 {
     gap: calc(var(--spacing) * 1.5);
@@ -641,7 +641,7 @@
     object-fit: cover;
   }
   .p-1 {
-    padding: calc(var(--spacing) * 1);
+    padding: var(--spacing);
   }
   .p-2 {
     padding: calc(var(--spacing) * 2);
@@ -665,7 +665,7 @@
     padding-block: calc(var(--spacing) * 0.5);
   }
   .py-1 {
-    padding-block: calc(var(--spacing) * 1);
+    padding-block: var(--spacing);
   }
   .py-1\.5 {
     padding-block: calc(var(--spacing) * 1.5);
@@ -677,13 +677,13 @@
     padding-block: calc(var(--spacing) * 4);
   }
   .ps-0 {
-    padding-inline-start: calc(var(--spacing) * 0);
+    padding-inline-start: 0;
   }
   .pe-0 {
-    padding-inline-end: calc(var(--spacing) * 0);
+    padding-inline-end: 0;
   }
   .pt-0 {
-    padding-top: calc(var(--spacing) * 0);
+    padding-top: 0;
   }
   .text-left {
     text-align: left;
@@ -1172,7 +1172,7 @@
   }
   .has-\[\>img\:first-child\]\:pt-0 {
     &:has(>img:first-child) {
-      padding-top: calc(var(--spacing) * 0);
+      padding-top: 0;
     }
   }
   .aria-expanded\:bg-muted {
@@ -1240,7 +1240,7 @@
   }
   .data-empty\:p-0 {
     &[data-empty] {
-      padding: calc(var(--spacing) * 0);
+      padding: 0;
     }
   }
   .data-highlighted\:border {
@@ -1329,14 +1329,14 @@
   .\*\:data-\[slot\=input-group\]\:m-1 {
     :is(& > *) {
       &[data-slot="input-group"] {
-        margin: calc(var(--spacing) * 1);
+        margin: var(--spacing);
       }
     }
   }
   .\*\:data-\[slot\=input-group\]\:mb-0 {
     :is(& > *) {
       &[data-slot="input-group"] {
-        margin-bottom: calc(var(--spacing) * 0);
+        margin-bottom: 0;
       }
     }
   }
@@ -1651,7 +1651,7 @@
   .group-data-\[size\=default\]\/switch\:data-unchecked\:translate-x-0 {
     &:is(:where(.group\/switch)[data-size="default"] *) {
       &:where([data-state="unchecked"]), &:where([data-unchecked]:not([data-unchecked="false"])) {
-        --tw-translate-x: calc(var(--spacing) * 0);
+        --tw-translate-x: 0;
         translate: var(--tw-translate-x) var(--tw-translate-y);
       }
     }
@@ -1659,7 +1659,7 @@
   .group-data-\[size\=sm\]\/switch\:data-unchecked\:translate-x-0 {
     &:is(:where(.group\/switch)[data-size="sm"] *) {
       &:where([data-state="unchecked"]), &:where([data-unchecked]:not([data-unchecked="false"])) {
-        --tw-translate-x: calc(var(--spacing) * 0);
+        --tw-translate-x: 0;
         translate: var(--tw-translate-x) var(--tw-translate-y);
       }
     }
@@ -1698,7 +1698,7 @@
   }
   .data-horizontal\:h-1 {
     &:where([data-orientation="horizontal"]) {
-      height: calc(var(--spacing) * 1);
+      height: var(--spacing);
     }
   }
   .data-horizontal\:h-full {
@@ -1723,7 +1723,7 @@
   }
   .data-vertical\:w-1 {
     &:where([data-orientation="vertical"]) {
-      width: calc(var(--spacing) * 1);
+      width: var(--spacing);
     }
   }
   .data-vertical\:w-auto {
