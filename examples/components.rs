@@ -1,7 +1,11 @@
+use std::fmt::Display;
+
 use dioxus::prelude::*;
 use tabi_ui::ThemeContext;
 use tabi_ui::components::*;
 use tabi_ui::icons::MdAdd;
+
+use crate::ValidatedNumber::{EnteredNumber, InvalidValue, Number};
 
 const TAILWIND_CSS: Asset = asset!("../assets/tailwind.css");
 
@@ -9,6 +13,7 @@ const TAILWIND_CSS: Asset = asset!("../assets/tailwind.css");
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     use dioxus::desktop::{Config, WindowBuilder};
+    use tabi_ui::get_window_background_color;
 
     let theme_context = ThemeContext::init().await;
 
@@ -29,6 +34,79 @@ async fn main() {
 #[cfg(feature = "web")]
 fn main() {
     dioxus::launch(App);
+}
+
+#[derive(Clone, PartialEq)]
+pub enum ValidatedNumber<const MIN: i32 = 0, const MAX: i32 = 1000, const DECIMALS: usize = 2> {
+    Number(f32),
+    EnteredNumber(String, f32),
+    InvalidValue(String, String),
+}
+
+impl<const MIN: i32, const MAX: i32, const DECIMALS: usize> Default
+    for ValidatedNumber<MIN, MAX, DECIMALS>
+{
+    fn default() -> Self {
+        Number(0.0)
+    }
+}
+
+impl<const MIN: i32, const MAX: i32, const DECIMALS: usize> Display
+    for ValidatedNumber<MIN, MAX, DECIMALS>
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Number(value) => write!(f, "{:.DECIMALS$}", value),
+            EnteredNumber(text, _value) => write!(f, "{}", text),
+            InvalidValue(text, _err) => write!(f, "{}", text),
+        }
+    }
+}
+
+impl<const MIN: i32, const MAX: i32, const DECIMALS: usize> ValidatableValue
+    for ValidatedNumber<MIN, MAX, DECIMALS>
+{
+    fn validation_error(&self) -> Option<String> {
+        if let InvalidValue(_text, error) = self {
+            return Some(error.clone());
+        }
+
+        None
+    }
+
+    fn finalize_value(self) -> Self {
+        if let EnteredNumber(_text, value) = self {
+            let multiplier = 10.0f32.powf(DECIMALS as f32);
+            return Number((value * multiplier).round() / multiplier);
+        }
+
+        self
+    }
+
+    fn parse_text(text: String) -> Self {
+        if text.chars().all(|c| c.is_whitespace()) {
+            return InvalidValue(text, "Required".to_string());
+        }
+
+        let valid_value = match text.parse::<f32>() {
+            Ok(value) => value,
+            Err(_err) => return InvalidValue(text, "Enter a valid number".to_string()),
+        };
+
+        let max = MAX as f32;
+
+        if valid_value > max {
+            return InvalidValue(text, format!("Maximum value {max:.DECIMALS$}"));
+        }
+
+        let min = MIN as f32;
+
+        if valid_value < min {
+            return InvalidValue(text, format!("Minimum value {min:.DECIMALS$}"));
+        }
+
+        EnteredNumber(text, valid_value)
+    }
 }
 
 #[component]
@@ -67,7 +145,7 @@ fn App() -> Element {
 
         TabiDefaultContext { class: "flex flex-wrap h-lvh",
             div { class: "p-4",
-                Card { class: "relative w-full max-w-sm overflow-hidden pt-0",
+                Card { class: "w-96 relative max-w-sm overflow-hidden pt-0",
                     div { class: "bg-primary absolute inset-0 z-30 aspect-video opacity-50 mix-blend-color" }
                     img {
                         src: asset!("/assets/KanjiReadings.png"),
@@ -122,8 +200,7 @@ fn App() -> Element {
             }
 
             div { class: "p-4",
-
-                Card { class: "w-96 h-96",
+                Card { class: "w-96",
                     CardHeader {
                         CardTitle { "User Information" }
                         CardDescription { "Please fill in your details below" }
@@ -168,6 +245,8 @@ fn App() -> Element {
                                     }
                                 }
                             }
+                            span { "Distance" }
+                            ValidatedTextInput::<ValidatedNumber<0,255,3>> { default_value: ValidatedNumber::Number(2.55) }
                             span { "Framework" }
                             // Combo box
                             Select::<String> {
