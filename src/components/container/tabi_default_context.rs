@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use dioxus::prelude::*;
 
-use crate::{ThemeStyle, WindowSize};
+use crate::{ThemeContext, ThemeStyle, WindowSize};
 
 /// # TabiDefaultContext
 ///
@@ -50,22 +50,38 @@ pub fn TabiDefaultContext(#[props(default)] class: String, children: Element) ->
 
     let mut loaded = use_signal(bool::default);
 
-    use_effect(move || {
-        spawn(async move {
-            #[cfg(not(feature = "web"))]
-            {
-                _ = tokio::spawn(async move {
-                    sleep(Duration::from_millis(10));
-                })
-                .await;
-            }
+    let theme_context = try_use_context::<ThemeContext>();
 
-            loaded.set(true);
-        });
+    let bg_color = use_memo(move || {
+        if let Some(theme_context) = theme_context.as_ref() {
+            let (r, g, b, _a) = theme_context.bg_color;
+            return format!("background-color: #{r:02x}{g:02x}{b:02x};");
+        }
+
+        return String::default();
+    });
+
+    use_future(move || async move {
+        #[cfg(not(feature = "web"))]
+        {
+            _ = tokio::spawn(async move {
+                sleep(Duration::from_millis(10));
+            })
+            .await;
+        }
+
+        loaded.set(true);
     });
 
     rsx! {
         ThemeStyle {}
+
+        if !*loaded.read() {
+            div {
+                class: "bg-white",
+                style: "height: 100lvh; width: 100lvw; {bg_color}",
+            }
+        }
 
         div {
             class,
