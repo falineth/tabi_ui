@@ -492,9 +492,6 @@
   .justify-end {
     justify-content: flex-end;
   }
-  .justify-start {
-    justify-content: flex-start;
-  }
   .gap-1 {
     gap: var(--spacing);
   }
@@ -576,6 +573,9 @@
   }
   .border-transparent {
     border-color: transparent;
+  }
+  .border-view-backgroundnormal {
+    border-color: var(--color-view-backgroundnormal);
   }
   .border-view-foregroundnormal\/20 {
     border-color: color-mix(in srgb, #232629 20%, transparent);
@@ -663,6 +663,9 @@
   }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
+  }
+  .px-px {
+    padding-inline: 1px;
   }
   .py-0\.5 {
     padding-block: calc(var(--spacing) * 0.5);
@@ -1003,6 +1006,16 @@
       }
     }
   }
+  .hover\:bg-view-decorationhover\/30 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: color-mix(in srgb, #3daee9 30%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          background-color: color-mix(in oklab, var(--color-view-decorationhover) 30%, transparent);
+        }
+      }
+    }
+  }
   .hover\:text-foreground {
     &:hover {
       @media (hover: hover) {
@@ -1037,6 +1050,12 @@
       border-color: var(--color-button-decorationfocus);
     }
   }
+  .focus-visible\:border {
+    &:focus-visible {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+    }
+  }
   .focus-visible\:border-complementary-decorationfocus {
     &:focus-visible {
       border-color: var(--color-complementary-decorationfocus);
@@ -1068,13 +1087,21 @@
       border-color: var(--color-view-decorationfocus);
     }
   }
-  .focus-visible\:ring-2 {
+  .focus-visible\:bg-view-decorationfocus\/30 {
     &:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      background-color: color-mix(in srgb, #3daee9 30%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-view-decorationfocus) 30%, transparent);
+      }
+    }
+  }
+  .focus-visible\:ring-1 {
+    &:focus-visible {
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
   }
-  .focus-visible\:ring-\[2px\] {
+  .focus-visible\:ring-2 {
     &:focus-visible {
       --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -1115,6 +1142,14 @@
       --tw-ring-color: var(--ring);
       @supports (color: color-mix(in lab, red, red)) {
         --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
+      }
+    }
+  }
+  .focus-visible\:ring-view-decorationfocus\/5 {
+    &:focus-visible {
+      --tw-ring-color: color-mix(in srgb, #3daee9 5%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        --tw-ring-color: color-mix(in oklab, var(--color-view-decorationfocus) 5%, transparent);
       }
     }
   }
@@ -1194,6 +1229,14 @@
       background-color: var(--secondary);
     }
   }
+  .aria-expanded\:bg-view-decorationfocus\/30 {
+    &[aria-expanded="true"] {
+      background-color: color-mix(in srgb, #3daee9 30%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-view-decorationfocus) 30%, transparent);
+      }
+    }
+  }
   .aria-expanded\:text-foreground {
     &[aria-expanded="true"] {
       color: var(--foreground);
@@ -1215,12 +1258,6 @@
     }
   }
   .aria-invalid\:ring-2 {
-    &[aria-invalid="true"] {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-  }
-  .aria-invalid\:ring-\[2px\] {
     &[aria-invalid="true"] {
       --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
