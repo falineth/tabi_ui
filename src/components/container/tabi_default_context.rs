@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use std::thread::sleep;
 use std::time::Duration;
 
@@ -42,10 +43,15 @@ use crate::{ThemeContext, ThemeStyle, WindowSize};
 ///
 /// Provides the contexts
 ///  - WindowSize
-///  - ModalOffset
 ///
 #[component]
 pub fn TabiDefaultContext(#[props(default)] class: String, children: Element) -> Element {
+    /*
+
+       State
+
+    */
+
     let mut window_size = use_context_provider(|| Signal::new(WindowSize::default()));
 
     let mut loaded = use_signal(bool::default);
@@ -60,6 +66,51 @@ pub fn TabiDefaultContext(#[props(default)] class: String, children: Element) ->
 
         return String::default();
     });
+
+    use_future(move || async move {
+        #[cfg(not(feature = "web"))]
+        {
+            _ = tokio::spawn(async move {
+                sleep(Duration::from_millis(10));
+            })
+            .await;
+        }
+    let mut outer_frame_element: Signal<Option<Rc<MountedData>>> = use_signal(|| None);
+
+    /*
+
+       Callbacks
+
+    */
+
+    let handle_outer_frame_mounted = use_callback(move |e: Event<MountedData>| {
+        outer_frame_element.set(Some(e.data()));
+    });
+
+    let handle_resize_event = use_callback(move |_: Event<ResizeData>| {
+        let outer_frame_element = outer_frame_element.cloned();
+
+        let Some(outer_frame_element) = outer_frame_element else {
+            return;
+        };
+
+        spawn(async move {
+            let Ok(rect) = outer_frame_element.get_client_rect().await else {
+                return;
+            };
+
+            window_size.set(WindowSize {
+                width: rect.width(),
+                height: rect.height(),
+            });
+        });
+    });
+
+    /*
+
+       Futures
+
+    */
 
     use_future(move || async move {
         #[cfg(not(feature = "web"))]
@@ -86,16 +137,8 @@ pub fn TabiDefaultContext(#[props(default)] class: String, children: Element) ->
         div {
             class,
             style: if !*loaded.read() { "display: none;" },
-            onresize: move |e| {
-                if let Ok(size) = e.get_content_box_size() {
-                    window_size
-                        .set(WindowSize {
-                            width: size.width,
-                            height: size.height,
-                        });
-                }
-            },
-
+            onmounted: handle_outer_frame_mounted,
+            onresize: handle_resize_event,
             {children}
         }
     }
