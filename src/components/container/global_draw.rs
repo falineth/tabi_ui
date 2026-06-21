@@ -1,14 +1,15 @@
 use dioxus::prelude::*;
 use dioxus_free_icons::icons::md_navigation_icons::MdMenu;
 
-use crate::components::{Button, Icon, IconShape};
 use crate::icons::MdCircle;
+use crate::{Button, ButtonVariant, Icon, IconShape};
 
 #[component]
 pub fn DrawAction<T: IconShape + Clone + PartialEq + 'static>(
     icon: T,
     #[props(default)] label: String,
     #[props(default)] onclick: EventHandler<Event<MouseData>>,
+    #[props(default)] aria_expanded: bool,
 ) -> Element {
     let ctx = use_context::<GlobalDrawContext>();
 
@@ -17,10 +18,13 @@ pub fn DrawAction<T: IconShape + Clone + PartialEq + 'static>(
     rsx! {
         Button {
             onclick,
-            class: "h-8 ps-0 pe-0 justify-start relative {extra_styles}",
-            div { class: "w-full flex items-center",
+            class: "h-8 ps-0 pe-0 relative {extra_styles}",
+            title: if !*ctx.open.read() { "{label}" },
+            variant: ButtonVariant::GhostView,
+            aria_expanded,
+            div { class: "w-full flex items-center px-px",
                 div { class: "h-7 w-7 flex justify-center items-center shrink-0",
-                    Icon { icon }
+                    Icon { class: "size-5", icon }
                 }
                 if ctx.open.cloned() {
                     span { class: "truncate", "{label}" }
@@ -46,7 +50,7 @@ pub fn GlobalDraw(
     use_context_provider(|| GlobalDrawContext { open });
 
     let handle_toggle_open = use_callback(move |_| {
-        open.set(!open.cloned());
+        open.with_mut(|value| *value = !*value);
     });
 
     rsx! {
@@ -54,7 +58,7 @@ pub fn GlobalDraw(
             div {
                 class: "flex flex-col justify-between h-full p-2 border-r overflow-hidden transition-all shrink-0",
                 class: "bg-view-backgroundnormal text-view-foregroundnormal border-window-foregroundnormal/20",
-                class: if open.cloned() { "w-44" } else { "w-12" },
+                class: if *open.read() { "w-44" } else { "w-12" },
                 div { class: "flex flex-col gap-1", {actions} }
                 if let Some(content) = content {
                     div { class: "flex flex-col gap-1",
@@ -63,7 +67,8 @@ pub fn GlobalDraw(
                         }
                         DrawAction {
                             icon: MdMenu,
-                            label: "Close Sidebar",
+                            label: if *open.read() { "Close Sidebar" } else { "Open Sidebar" },
+                            aria_expanded: *open.read(),
                             onclick: handle_toggle_open,
                         }
                     }

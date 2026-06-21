@@ -112,7 +112,7 @@ pub fn DialogContent(
                     "data-slot": "dialog-close",
                     class: "absolute top-2 right-2",
                     Button {
-                        variant: ButtonVariant::Ghost,
+                        variant: ButtonVariant::GhostView,
                         size: ButtonSize::IconSM,
                         Icon { icon: MdClose }
                         span { class: "sr-only", "Close" }
