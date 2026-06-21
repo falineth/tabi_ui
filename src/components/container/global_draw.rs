@@ -52,7 +52,7 @@ pub fn GlobalDraw(
     rsx! {
         div { class: "flex h-lvh w-lvw overflow-hidden",
             div {
-                class: "flex flex-col justify-between h-full p-2 border-r overflow-hidden transition-all",
+                class: "flex flex-col justify-between h-full p-2 border-r overflow-hidden transition-all shrink-0",
                 class: "bg-view-backgroundnormal text-view-foregroundnormal border-window-foregroundnormal/20",
                 class: if open.cloned() { "w-44" } else { "w-12" },
                 div { class: "flex flex-col gap-1", {actions} }
