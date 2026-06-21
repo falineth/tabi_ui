@@ -52,11 +52,23 @@ pub fn TabiDefaultContext(#[props(default)] class: String, children: Element) ->
 
     */
 
-    let mut window_size = use_context_provider(|| Signal::new(WindowSize::default()));
-
     let mut loaded = use_signal(bool::default);
 
     let theme_context = try_use_context::<ThemeContext>();
+
+    /*
+
+        Contexts
+
+    */
+
+    let mut window_size = use_context_provider(|| Signal::new(WindowSize::default()));
+
+    /*
+
+       Memos
+
+    */
 
     let bg_color = use_memo(move || {
         if let Some(theme_context) = theme_context.as_ref() {
@@ -67,14 +79,6 @@ pub fn TabiDefaultContext(#[props(default)] class: String, children: Element) ->
         return String::default();
     });
 
-    use_future(move || async move {
-        #[cfg(not(feature = "web"))]
-        {
-            _ = tokio::spawn(async move {
-                sleep(Duration::from_millis(10));
-            })
-            .await;
-        }
     let mut outer_frame_element: Signal<Option<Rc<MountedData>>> = use_signal(|| None);
 
     /*

@@ -129,13 +129,26 @@ pub fn SelectOption<T: Clone + PartialEq + 'static>(props: SelectOptionProps<T>)
             role: "option",
             id,
             class: "data-highlighted:bg-window-decorationfocus/20 data-highlighted:border-window-decorationfocus not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground",
-            class: "min-h-7 gap-2 rounded-sm px-2 py-1 text-xs/relaxed [&_svg:not([class*='size-'])]:size-3.5 relative flex w-full cursor-default items-center outline-hidden select-none data-highlighted:border data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+            class: "data-disabled:pointer-events-none data-disabled:opacity-50",
+            class: "[&_svg:not([class*='size-'])]:size-3.5 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+            class: "border border-transparent min-h-7 gap-2 rounded-sm px-2 py-1 text-xs/relaxed relative flex w-full cursor-default items-center outline-hidden select-none",
             class: if index == 0 { "combo-option option-current" } else { "combo-option" },
             class: "{class}",
             aria_selected: selected(),
             "data-highlighted": if active() { true },
             onmounted: move |e| {
                 option_element.set(Some(e.data()));
+            },
+            onpointerenter: move |e| {
+                ctx.active_value
+                    .set(
+                        Some(OptionState {
+                            index: index(),
+                            value: Some(value.cloned()),
+                            text_value: text_value.read().cloned().unwrap_or_default(),
+                            id: id.cloned(),
+                        }),
+                    );
             },
             onclick: move |e| {
                 e.prevent_default();
