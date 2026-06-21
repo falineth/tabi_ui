@@ -94,14 +94,8 @@ pub fn SelectList<T: Clone + PartialEq + 'static>(props: SelectListProps) -> Ele
         let list_height = ctx.list_height.read().unwrap_or_default();
 
         let direction: PopupDirection = if let Some(window_size) = window_size {
-            let ws = window_size.cloned();
-            debug!("window_size: {}h {}w", ws.height, ws.width);
-
             let space_below = window_size.read().height - combo_rect.max_y();
             let space_above = combo_rect.min_y();
-
-            debug!("space_above: {space_above}");
-            debug!("space_below: {space_below}");
 
             if list_height + LIST_SPACING < space_below {
                 PopupDirection::Down(space_below - LIST_SPACING)

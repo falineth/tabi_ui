@@ -64,6 +64,7 @@
         "oninput",
         "onmounted",
         "onpointerdown",
+        "onpointerenter",
         "onpointermove",
         "onpointerup",
         "onresize",
