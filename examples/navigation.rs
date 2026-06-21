@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
+use tabi_ui::ThemeContext;
 use tabi_ui::components::*;
-use tabi_ui::get_window_background_color;
 use tabi_ui::icons::{MdHome, MdInfoOutline, MdSettings};
 
 const TAILWIND_CSS: Asset = asset!("../assets/tailwind.css");
@@ -126,25 +126,27 @@ fn App() -> Element {
 }
 
 #[cfg(feature = "desktop")]
-fn launch_app() {
+#[tokio::main(flavor = "multi_thread")]
+async fn main() {
     use dioxus::desktop::{Config, WindowBuilder};
 
+    let theme_context = ThemeContext::init().await;
+
     let mut config = Config::default()
-        .with_background_color(get_window_background_color())
+        .with_background_color(theme_context.bg_color)
         .with_window(WindowBuilder::new().with_title("Navigation Example"));
 
     if cfg!(not(debug_assertions)) {
         config = config.with_menu(None);
     }
 
-    LaunchBuilder::new().with_cfg(config).launch(App);
+    LaunchBuilder::new()
+        .with_cfg(config)
+        .with_context(theme_context)
+        .launch(App);
 }
 
 #[cfg(feature = "web")]
-fn launch_app() {
-    dioxus::launch(App);
-}
-
 fn main() {
-    launch_app();
+    dioxus::launch(App);
 }

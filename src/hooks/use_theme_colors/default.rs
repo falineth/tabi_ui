@@ -14,3 +14,18 @@ fn get_theme_colors() -> String {
 pub fn get_window_background_color() -> (u8, u8, u8, u8) {
     return DEFAULT_WINDOW_BACKGROUND;
 }
+
+#[derive(Clone)]
+pub struct ThemeContext {
+    pub theme_css: String,
+    pub bg_color: (u8, u8, u8, u8),
+}
+
+impl ThemeContext {
+    pub fn init() -> Self {
+        ThemeContext {
+            theme_css: DEFAULT_THEME.to_string(),
+            bg_color: DEFAULT_WINDOW_BACKGROUND,
+        }
+    }
+}

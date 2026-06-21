@@ -1,32 +1,34 @@
-use std::fs::read_to_string;
+use std::collections::HashMap;
 use std::sync::Arc;
+use std::time::Duration;
 
+use dbus::arg::{RefArg, Variant};
 use dbus::message::MatchRule;
-use dbus::nonblock::{MsgMatch, SyncConnection};
+use dbus::nonblock::{MsgMatch, Proxy, SyncConnection};
 use dioxus::prelude::*;
 
 const DEFAULT_THEME: &str = include_str!("../../../assets/default_theme.css");
 const DEFAULT_WINDOW_BACKGROUND: (u8, u8, u8, u8) = (0xEF, 0xF0, 0xF1, 0xFF);
-const KDE_COLOUR_CONFIG: &str = "kdeglobals";
 
-pub fn use_theme_colors() -> ReadSignal<String, SyncStorage> {
-    let theme_colors: Signal<String, SyncStorage> = use_signal_sync(get_theme_colors);
+type VariantRefArg = Variant<Box<dyn RefArg + 'static>>;
 
-    use_dbus_theme_event_listener(theme_colors);
+type ConfigSection = HashMap<String, HashMap<String, VariantRefArg>>;
 
-    return theme_colors.into();
+#[derive(Clone)]
+pub struct ThemeContext {
+    pub dbus_conn: Option<Arc<SyncConnection>>,
+    pub theme_css: String,
+    pub bg_color: (u8, u8, u8, u8),
 }
 
-fn use_dbus_theme_event_listener(mut theme_colors: Signal<String, SyncStorage>) {
-    let mut dbus_conn: Signal<Option<Arc<SyncConnection>>, SyncStorage> =
-        use_signal_sync(Option::default);
-
-    let mut dbus_incoming_signal: Signal<Option<MsgMatch>, SyncStorage> =
-        use_signal_sync(Option::default);
-
-    spawn(async move {
+impl ThemeContext {
+    pub async fn init() -> Self {
         let Ok((resource, conn)) = dbus_tokio::connection::new_session_sync() else {
-            return;
+            return ThemeContext {
+                dbus_conn: None,
+                theme_css: DEFAULT_THEME.to_string(),
+                bg_color: DEFAULT_WINDOW_BACKGROUND,
+            };
         };
 
         tokio::spawn(async {
@@ -34,127 +36,258 @@ fn use_dbus_theme_event_listener(mut theme_colors: Signal<String, SyncStorage>) 
             println!("DBus connection lost: {:?}", err);
         });
 
-        let signal_match_rule =
-            MatchRule::new_signal("org.freedesktop.portal.Settings", "SettingChanged");
-
-        let Ok(message_match) = conn
-            .add_match(signal_match_rule)
-            .await
-            .inspect_err(|err| println!("Error 1 {err:?}"))
-        else {
-            return;
+        let Some((theme_css, bg_color)) = get_theme_css(conn.clone()).await else {
+            return ThemeContext {
+                dbus_conn: Some(conn),
+                theme_css: DEFAULT_THEME.to_string(),
+                bg_color: DEFAULT_WINDOW_BACKGROUND,
+            };
         };
 
-        let incoming_signal = message_match.cb(move |_, (source, setting): (String, String)| {
-            if source == "org.kde.kdeglobals.General" && setting == "ColorScheme" {
-                println!("Theme colors changed");
-                let new_theme_colors = get_theme_colors();
-                theme_colors.set(new_theme_colors);
-            }
+        return ThemeContext {
+            dbus_conn: Some(conn),
+            theme_css,
+            bg_color,
+        };
+    }
+}
 
-            true
-        });
+pub fn use_theme_colors() -> ReadSignal<String, SyncStorage> {
+    /*
 
-        dbus_conn.set(Some(conn));
-        dbus_incoming_signal.set(Some(incoming_signal));
+        Contexts
+
+    */
+
+    let theme_context = try_use_context::<ThemeContext>();
+
+    /*
+
+        State
+
+    */
+
+    let theme_colors: Signal<String, SyncStorage> = use_signal_sync(|| {
+        if let Some(theme_context) = theme_context.as_ref() {
+            return theme_context.theme_css.clone();
+        }
+
+        DEFAULT_THEME.to_string()
+    });
+
+    let mut dbus_conn: Signal<Option<Arc<SyncConnection>>, SyncStorage> =
+        use_signal_sync(Option::default);
+
+    let mut dbus_incoming_signal: Signal<Option<MsgMatch>, SyncStorage> =
+        use_signal_sync(Option::default);
+
+    /*
+
+        Futures
+
+    */
+
+    use_future(move || {
+        let theme_context = theme_context.clone();
+
+        async move {
+            let Some(conn) = get_dbus_connection(theme_context.as_ref()) else {
+                return;
+            };
+
+            let signal_match_rule =
+                MatchRule::new_signal("org.freedesktop.portal.Settings", "SettingChanged");
+
+            let Ok(message_match) = conn
+                .add_match(signal_match_rule)
+                .await
+                .inspect_err(|err| println!("Error 1 {err:?}"))
+            else {
+                return;
+            };
+
+            dbus_conn.set(Some(conn.clone()));
+
+            theme_refresh(theme_colors, dbus_conn.cloned());
+
+            let incoming_signal = message_match.cb(
+                move |_, (source, setting, _value): (String, String, VariantRefArg)| {
+                    if source == "org.kde.kdeglobals.General"
+                        && matches!(setting.as_str(), "ColorScheme" | "font" | "fixed")
+                    {
+                        println!("Theme colors changed");
+                        theme_refresh(theme_colors, dbus_conn.cloned());
+                    }
+
+                    true
+                },
+            );
+
+            dbus_incoming_signal.set(Some(incoming_signal));
+        }
+    });
+
+    return theme_colors.into();
+}
+
+fn get_dbus_connection(theme_context: Option<&ThemeContext>) -> Option<Arc<SyncConnection>> {
+    if let Some(theme_context) = theme_context
+        && let Some(dbus_conn) = theme_context.dbus_conn.as_ref()
+    {
+        return Some(dbus_conn.clone());
+    }
+
+    let (resource, conn) = dbus_tokio::connection::new_session_sync().ok()?;
+
+    tokio::spawn(async {
+        let err = resource.await;
+        println!("DBus connection lost: {:?}", err);
+    });
+
+    return Some(conn);
+}
+
+fn theme_refresh(
+    mut theme_colors: Signal<String, SyncStorage>,
+    dbus_conn: Option<Arc<SyncConnection>>,
+) {
+    let Some(conn) = dbus_conn else {
+        return;
+    };
+
+    tokio::spawn(async move {
+        if let Some((new_theme_css, _bg_color)) = get_theme_css(conn).await {
+            theme_colors.set(new_theme_css);
+        }
     });
 }
 
-pub fn get_window_background_color() -> (u8, u8, u8, u8) {
-    let Some(config_dir) = dirs::config_dir() else {
-        return DEFAULT_WINDOW_BACKGROUND;
-    };
+async fn get_theme_css(conn: Arc<SyncConnection>) -> Option<(String, (u8, u8, u8, u8))> {
+    let mut css_lines = Vec::new();
 
-    let color_config_path = config_dir.join(KDE_COLOUR_CONFIG);
+    let settings = read_portal_settings(
+        &conn,
+        &[
+            "org.kde.kdeglobals.General",
+            "org.kde.kdeglobals.Colors:Button",
+            "org.kde.kdeglobals.Colors:Complementary",
+            "org.kde.kdeglobals.Colors:Selection",
+            "org.kde.kdeglobals.Colors:Tooltip",
+            "org.kde.kdeglobals.Colors:View",
+            "org.kde.kdeglobals.Colors:Window",
+        ],
+    )
+    .await?;
 
-    let Ok(mut color_data) = read_to_string(&color_config_path) else {
-        return DEFAULT_WINDOW_BACKGROUND;
-    };
-
-    color_data.make_ascii_lowercase();
-
-    let mut current_color_section: Option<&str> = None;
-
-    for line in color_data.lines() {
-        if let Some(section_name) = as_config_section_name(line) {
-            current_color_section = as_color_section_name(section_name);
-            continue;
+    if let Some(general_settings) = settings.get("org.kde.kdeglobals.General") {
+        if let Some(font_declaration) = get_font_css(general_settings, "font", "font-sans") {
+            css_lines.push(font_declaration);
+            css_lines.push("--default-font-family:var(--font-sans);".to_string());
         }
 
-        if !matches!(current_color_section, Some("window")) {
-            continue;
-        }
-
-        if let Some(css_color_value) = as_css_color_tuple_for_key(line, "backgroundnormal") {
-            return css_color_value;
+        if let Some(font_declaration) = get_font_css(general_settings, "fixed", "font-mono") {
+            css_lines.push(font_declaration);
+            css_lines.push("--default-mono-font-family:var(--font-mono);".to_string());
         }
     }
 
-    return DEFAULT_WINDOW_BACKGROUND;
+    if let Some(button_colors) =
+        get_color_css(&settings, "org.kde.kdeglobals.Colors:Button", "button")
+    {
+        css_lines.extend(button_colors);
+    }
+
+    if let Some(button_colors) = get_color_css(
+        &settings,
+        "org.kde.kdeglobals.Colors:Complementary",
+        "complementary",
+    ) {
+        css_lines.extend(button_colors);
+    }
+
+    if let Some(button_colors) = get_color_css(
+        &settings,
+        "org.kde.kdeglobals.Colors:Selection",
+        "selection",
+    ) {
+        css_lines.extend(button_colors);
+    }
+
+    if let Some(button_colors) =
+        get_color_css(&settings, "org.kde.kdeglobals.Colors:Tooltip", "tooltip")
+    {
+        css_lines.extend(button_colors);
+    }
+
+    if let Some(button_colors) = get_color_css(&settings, "org.kde.kdeglobals.Colors:View", "view")
+    {
+        css_lines.extend(button_colors);
+    }
+
+    if let Some(button_colors) =
+        get_color_css(&settings, "org.kde.kdeglobals.Colors:Window", "window")
+    {
+        css_lines.extend(button_colors);
+    }
+
+    let bg_color = settings
+        .get("org.kde.kdeglobals.Colors:Window")
+        .and_then(|window_colors| window_colors.get("backgroundnormal"))
+        .and_then(|bg_color| get_color_value(bg_color))
+        .unwrap_or(DEFAULT_WINDOW_BACKGROUND);
+
+    css_lines.push("--color-background:var(--color-window-backgroundnormal);--color-foreground:var(--color-window-foregroundnormal);--background:var(--color-window-backgroundnormal);--foreground:var(--color-window-foregroundnormal);body{background-color:var(--color-window-backgroundnormal);}}".to_string());
+
+    let theme_css = format!(":root {{{}}}", css_lines.join(""));
+
+    return (theme_css, bg_color).into();
 }
 
-fn get_theme_colors() -> String {
-    let Some(config_dir) = dirs::config_dir() else {
-        return DEFAULT_THEME.to_string();
-    };
+fn get_font_css(
+    general_settings: &HashMap<String, String>,
+    key: &str,
+    theme_value: &str,
+) -> Option<String> {
+    let font_value = general_settings.get(key)?;
 
-    let color_config_path = config_dir.join(KDE_COLOUR_CONFIG);
+    let font_name = font_value
+        .split_once(",")
+        .map(|(font_name, _remainder)| font_name.to_string())?;
 
-    let Ok(mut color_data) = read_to_string(&color_config_path) else {
-        return DEFAULT_THEME.to_string();
-    };
-
-    color_data.make_ascii_lowercase();
-
-    let mut current_color_section: Option<&str> = None;
-
-    let mut theme_color_list: Vec<String> = vec![":root {".to_string()];
-
-    for line in color_data.lines() {
-        if let Some(section_name) = as_config_section_name(line) {
-            current_color_section = as_color_section_name(section_name);
-            continue;
-        }
-
-        if let Some(current_theme_section_name) = current_color_section
-            && let Some(css_color_value) = as_css_color_value(line, current_theme_section_name)
-        {
-            theme_color_list.push(css_color_value);
-            continue;
-        }
-    }
-
-    if theme_color_list.len() == 1 {
-        return DEFAULT_THEME.to_string();
-    }
-
-    theme_color_list.push("--color-background:var(--color-window-backgroundnormal);--color-foreground:var(--color-window-foregroundnormal);--background:var(--color-window-backgroundnormal);--foreground:var(--color-window-foregroundnormal);body{background-color:var(--color-window-backgroundnormal);}}".to_string());
-
-    return theme_color_list.concat();
+    format!("--{theme_value}:{font_name};").into()
 }
 
-fn as_config_section_name(line: &str) -> Option<&str> {
-    line.strip_prefix("[")
-        .and_then(|value| value.strip_suffix("]"))
+fn get_color_css(
+    settings: &HashMap<String, HashMap<String, String>>,
+    section_name: &str,
+    theme_section: &str,
+) -> Option<Vec<String>> {
+    let color_section = settings.get(section_name)?;
+
+    color_section
+        .iter()
+        .filter_map(|(key, value)| format_color_value(theme_section, key, value))
+        .collect::<Vec<_>>()
+        .into()
 }
 
-fn as_color_section_name(section_name: &str) -> Option<&str> {
-    let section_name = section_name.strip_prefix("colors:")?;
+fn format_color_value(theme_section: &str, key: &str, value: &str) -> Option<String> {
+    let (r, g_b) = value.split_once(",")?;
 
-    if !section_name.bytes().all(|c| c.is_ascii_alphabetic()) {
-        return None;
-    }
+    let r = r.parse::<u8>().ok()?;
 
-    return Some(section_name);
+    let (g, b) = g_b.split_once(",")?;
+
+    let g = g.parse::<u8>().ok()?;
+
+    let b = b.parse::<u8>().ok()?;
+
+    return Some(format!(
+        "--color-{theme_section}-{key}:#{r:02x}{g:02x}{b:02x};"
+    ));
 }
 
-fn as_css_color_tuple_for_key(line: &str, wanted_key: &str) -> Option<(u8, u8, u8, u8)> {
-    let (key, value) = line.split_once("=")?;
-
-    if key != wanted_key {
-        return None;
-    }
-
+fn get_color_value(value: &str) -> Option<(u8, u8, u8, u8)> {
     let (r, g_b) = value.split_once(",")?;
 
     let r = r.parse::<u8>().ok()?;
@@ -168,24 +301,45 @@ fn as_css_color_tuple_for_key(line: &str, wanted_key: &str) -> Option<(u8, u8, u
     return Some((r, g, b, 0xFF));
 }
 
-fn as_css_color_value(line: &str, theme_section_name: &str) -> Option<String> {
-    let (key, value) = line.split_once("=")?;
+async fn read_portal_settings(
+    conn: &Arc<SyncConnection>,
+    namespaces: &[&str],
+) -> Option<HashMap<String, HashMap<String, String>>> {
+    let proxy = Proxy::new(
+        "org.freedesktop.portal.Desktop",
+        "/org/freedesktop/portal/desktop",
+        Duration::from_secs(10),
+        conn.clone(),
+    );
 
-    if !key.bytes().all(|c| c.is_ascii_alphabetic()) {
-        return None;
+    let result: Result<(ConfigSection,), dbus::Error> = proxy
+        .method_call("org.freedesktop.portal.Settings", "ReadAll", (namespaces,))
+        .await;
+
+    if let Err(err) = result.as_ref() {
+        debug!("read_portal_settings result: {err:?}");
     }
 
-    let (r, g_b) = value.split_once(",")?;
+    return result
+        .ok()?
+        .0
+        .into_iter()
+        .map(|(namespace, values)| {
+            (
+                namespace,
+                values
+                    .into_iter()
+                    .map(|(key, value)| (key.to_ascii_lowercase(), get_variant_string(value)))
+                    .collect::<HashMap<String, String>>(),
+            )
+        })
+        .collect::<HashMap<String, HashMap<String, String>>>()
+        .into();
+}
 
-    let r = r.parse::<u8>().ok()?;
-
-    let (g, b) = g_b.split_once(",")?;
-
-    let g = g.parse::<u8>().ok()?;
-
-    let b = b.parse::<u8>().ok()?;
-
-    return Some(format!(
-        "--color-{theme_section_name}-{key}:#{r:02x}{g:02x}{b:02x};"
-    ));
+fn get_variant_string(value: VariantRefArg) -> String {
+    return value
+        .as_str()
+        .map(|value| value.to_string())
+        .unwrap_or_default();
 }

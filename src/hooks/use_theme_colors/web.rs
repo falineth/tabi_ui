@@ -31,3 +31,25 @@ pub fn get_is_dark_mode() -> bool {
         .map(|query| query.matches())
         .unwrap()
 }
+
+#[derive(Clone)]
+pub struct ThemeContext {
+    pub theme_css: String,
+    pub bg_color: (u8, u8, u8, u8),
+}
+
+impl ThemeContext {
+    pub fn init() -> Self {
+        if get_is_dark_mode() {
+            ThemeContext {
+                theme_css: DEFAULT_DARK_THEME.to_string(),
+                bg_color: DEFAULT_DARK_WINDOW_BACKGROUND,
+            }
+        } else {
+            ThemeContext {
+                theme_css: DEFAULT_THEME.to_string(),
+                bg_color: DEFAULT_WINDOW_BACKGROUND,
+            }
+        }
+    }
+}
