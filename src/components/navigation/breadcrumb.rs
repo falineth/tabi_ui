@@ -8,8 +8,9 @@ use crate::icons::MdCircle;
 pub fn BreadcrumbBar(#[props(default)] class: String, children: Element) -> Element {
     rsx! {
         div {
-            class: "flex px-4 items-center h-12 w-full border-b",
+            class: "flex px-4 items-center h-12 w-full border-b shrink-0",
             class: "border-window-foregroundnormal/20",
+            class: "{class}",
             {children}
         }
     }
@@ -77,7 +78,7 @@ pub fn BreadcrumbLink(
         Link { to,
             span {
                 "data-slot": "breadcrumb-item",
-                class: "hover:text-foreground transition-colors text-lg",
+                class: "hover:text-foreground transition-colors text-lg select-none",
                 class: "{class}",
                 ..rest,
                 {children}
@@ -98,7 +99,7 @@ pub fn BreadcrumbPage(
             role: "link",
             aria_disabled: "true",
             aria_current: "page",
-            class: "text-foreground font-normal",
+            class: "text-foreground font-normal select-none",
             class: "{class}",
             ..rest,
             {children}
