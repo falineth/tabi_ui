@@ -8,6 +8,7 @@ use crate::{Button, ButtonVariant, Icon, IconShape};
 pub fn DrawAction<T: IconShape + Clone + PartialEq + 'static>(
     icon: T,
     #[props(default)] label: String,
+    #[props(default)] class: String,
     #[props(default)] onclick: EventHandler<Event<MouseData>>,
     #[props(default)] aria_expanded: bool,
 ) -> Element {
@@ -18,7 +19,7 @@ pub fn DrawAction<T: IconShape + Clone + PartialEq + 'static>(
     rsx! {
         Button {
             onclick,
-            class: "h-8 ps-0 pe-0 relative {extra_styles}",
+            class: "h-8 ps-0 pe-0 relative {extra_styles} {class}",
             title: if !*ctx.open.read() { "{label}" },
             variant: ButtonVariant::GhostView,
             aria_expanded,
@@ -56,10 +57,13 @@ pub fn GlobalDraw(
     rsx! {
         div { class: "flex h-lvh w-lvw overflow-hidden",
             div {
-                class: "flex flex-col justify-between h-full p-2 border-r overflow-hidden transition-all shrink-0",
+                class: "flex flex-col justify-between h-full p-2 border-r overflow-hidden shrink-0",
                 class: "bg-view-backgroundnormal text-view-foregroundnormal border-window-foregroundnormal/20",
-                class: if *open.read() { "w-44" } else { "w-12" },
-                div { class: "flex flex-col gap-1", {actions} }
+                div {
+                    class: "flex flex-col gap-1 transition-all",
+                    class: if *open.read() { "w-36" } else { "w-8" },
+                    {actions}
+                }
                 if let Some(content) = content {
                     div { class: "flex flex-col gap-1",
                         if open.cloned() {
