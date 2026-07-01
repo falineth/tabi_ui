@@ -9,6 +9,7 @@ pub fn TextArea(
     #[props(default)] default_value: String,
     #[props(default)] value: ReadSignal<Option<String>>,
     #[props(default)] on_value_change: Callback<String>,
+    #[props(default)] on_accept: Option<Callback<String>>,
 
     #[props(extends = GlobalAttributes, extends = textarea)] rest: Vec<Attribute>,
 
@@ -25,6 +26,14 @@ pub fn TextArea(
             class: "{class}",
             value,
             oninput: move |e| set_value_internal(e.data.value()),
+            onkeydown: move |e| {
+                if let Some(on_accept) = on_accept && e.key() == Key::Enter
+                    && e.modifiers().is_empty()
+                {
+                    e.prevent_default();
+                    on_accept.call(value.cloned());
+                }
+            },
             ..rest,
             {children}
         }
