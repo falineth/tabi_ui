@@ -15,12 +15,15 @@ pub fn TextInputDialog(
     #[props(default)] placeholder: ReadSignal<String>,
     #[props(default)] accept_text: ReadSignal<String>,
 
+    #[props(default)] open: ReadSignal<Option<bool>>,
+    #[props(default)] on_open_change: Callback<bool>,
+
     #[props(default)] on_accept_value: Callback<String, Option<String>>,
 
     children: Element,
 ) -> Element {
     rsx! {
-        Dialog {
+        Dialog { open, on_open_change,
             DialogTrigger { disabled, {children} }
             DialogContent {
                 TextInputDialogCore {
