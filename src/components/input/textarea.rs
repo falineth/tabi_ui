@@ -20,7 +20,7 @@ pub fn TextArea(
     rsx! {
         textarea {
             "data-slot": "textarea",
-            class: "border-view-foregroundnormal/20 bg-view-backgroundnormal hover:border-view-decorationhover focus-visible:border-view-decorationfocus placeholder:text-view-foregroundinactive",
+            class: "border-view-foregroundnormal/20 bg-view-backgroundnormal text-view-foregroundnormal hover:border-view-decorationhover focus-visible:border-view-decorationfocus placeholder:text-view-foregroundinactive",
             class: "aria-invalid:ring-view-foregroundnegative/20 aria-invalid:border-view-foregroundnegative",
             class: "resize-none rounded-sm border px-2 py-2 text-sm transition-colors aria-invalid:ring-2 md:text-xs/relaxed flex field-sizing-content min-h-16 w-full outline-none disabled:cursor-not-allowed disabled:opacity-50",
             class: "{class}",

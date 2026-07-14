@@ -26,7 +26,8 @@ pub fn TextInput(
     rsx! {
         input {
             "data-slot": "input",
-            class: "border-view-foregroundnormal/20 hover:border-complementary-decorationhover focus-visible:border-complementary-decorationfocus placeholder:text-view-foregroundinactive",
+            class: "bg-view-backgroundnormal text-view-foregroundnormal placeholder:text-view-foregroundinactive border-view-foregroundnormal/20",
+            class: "hover:border-complementary-decorationhover focus-visible:border-complementary-decorationfocus",
             class: "aria-invalid:ring-view-foregroundnegative/20 aria-invalid:border-view-foregroundnegative",
             class: "file:h-6 file:text-xs/relaxed file:font-medium file:text-foreground file:inline-flex file:border-0 file:bg-transparent",
             class: "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
