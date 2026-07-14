@@ -46,6 +46,7 @@
     --color-view-foregroundnormal: #232629;
     --color-window-backgroundnormal: #eff0f1;
     --color-window-decorationfocus: #3daee9;
+    --color-window-decorationhover: #3daee9;
     --color-window-foregroundnormal: #232629;
     --color-black: #000000;
     --color-background: var(--background);
@@ -328,13 +329,13 @@
   .aspect-video {
     aspect-ratio: var(--aspect-video);
   }
-  .size-3 {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
   .size-4 {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
+  }
+  .size-4\.5 {
+    width: calc(var(--spacing) * 4.5);
+    height: calc(var(--spacing) * 4.5);
   }
   .size-5 {
     width: calc(var(--spacing) * 5);
@@ -429,6 +430,9 @@
   }
   .min-w-8 {
     min-width: calc(var(--spacing) * 8);
+  }
+  .min-w-40 {
+    min-width: calc(var(--spacing) * 40);
   }
   .shrink-0 {
     flex-shrink: 0;
@@ -560,6 +564,10 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
+  .border-\[0\.5px\] {
+    border-style: var(--tw-border-style);
+    border-width: 0.5px;
+  }
   .border-r {
     border-right-style: var(--tw-border-style);
     border-right-width: 1px;
@@ -567,6 +575,12 @@
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
+  }
+  .border-\[color-mix\(in_srgb\,var\(--color-window-foregroundnormal\)_40\%\,var\(--color-window-backgroundnormal\)\)\] {
+    border-color: color-mix(in srgb,#232629 40%,#eff0f1);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in srgb,var(--color-window-foregroundnormal) 40%,var(--color-window-backgroundnormal));
+    }
   }
   .border-border {
     border-color: rgba(var(--color-window-foregroundnormal), 0.2);
@@ -579,9 +593,6 @@
   }
   .border-input {
     border-color: var(--input);
-  }
-  .border-ring {
-    border-color: var(--ring);
   }
   .border-transparent {
     border-color: transparent;
@@ -599,6 +610,18 @@
     border-color: color-mix(in srgb, #232629 20%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-window-foregroundnormal) 20%, transparent);
+    }
+  }
+  .border-window-foregroundnormal\/30 {
+    border-color: color-mix(in srgb, #232629 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-window-foregroundnormal) 30%, transparent);
+    }
+  }
+  .bg-\[color-mix\(in_srgb\,var\(--color-window-foregroundnormal\)_20\%\,var\(--color-window-backgroundnormal\)\)\] {
+    background-color: color-mix(in srgb,#232629 20%,#eff0f1);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in srgb,var(--color-window-foregroundnormal) 20%,var(--color-window-backgroundnormal));
     }
   }
   .bg-background {
@@ -625,9 +648,6 @@
       background-color: color-mix(in oklab, var(--input) 20%, transparent);
     }
   }
-  .bg-muted {
-    background-color: var(--muted);
-  }
   .bg-primary {
     background-color: var(--primary);
   }
@@ -648,6 +668,12 @@
   }
   .bg-window-backgroundnormal {
     background-color: var(--color-window-backgroundnormal);
+  }
+  .bg-window-decorationfocus\/60 {
+    background-color: color-mix(in srgb, #3daee9 60%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-window-decorationfocus) 60%, transparent);
+    }
   }
   .bg-clip-padding {
     background-clip: padding-box;
@@ -798,12 +824,6 @@
   .ring-1 {
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-  .ring-ring\/30 {
-    --tw-ring-color: var(--ring);
-    @supports (color: color-mix(in lab, red, red)) {
-      --tw-ring-color: color-mix(in oklab, var(--ring) 30%, transparent);
-    }
   }
   .ring-view-foregroundnormal\/5 {
     --tw-ring-color: color-mix(in srgb, #232629 5%, transparent);
@@ -987,6 +1007,13 @@
       }
     }
   }
+  .hover\:border-window-decorationhover {
+    &:hover {
+      @media (hover: hover) {
+        border-color: var(--color-window-decorationhover);
+      }
+    }
+  }
   .hover\:bg-destructive\/20 {
     &:hover {
       @media (hover: hover) {
@@ -1065,10 +1092,10 @@
       }
     }
   }
-  .hover\:ring-2 {
+  .hover\:ring-1 {
     &:hover {
       @media (hover: hover) {
-        --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+        --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
         box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
       }
     }
@@ -1215,9 +1242,9 @@
       }
     }
   }
-  .active\:ring-2 {
+  .active\:ring-1 {
     &:active {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
   }
@@ -1798,9 +1825,9 @@
       opacity: 50%;
     }
   }
-  .data-horizontal\:h-1 {
+  .data-horizontal\:h-1\.25 {
     &:where([data-orientation="horizontal"]) {
-      height: var(--spacing);
+      height: calc(var(--spacing) * 1.25);
     }
   }
   .data-horizontal\:h-full {
@@ -1823,9 +1850,9 @@
       min-height: calc(var(--spacing) * 40);
     }
   }
-  .data-vertical\:w-1 {
+  .data-vertical\:w-1\.25 {
     &:where([data-orientation="vertical"]) {
-      width: var(--spacing);
+      width: calc(var(--spacing) * 1.25);
     }
   }
   .data-vertical\:w-auto {
@@ -1836,6 +1863,11 @@
   .data-vertical\:w-full {
     &:where([data-orientation="vertical"]) {
       width: 100%;
+    }
+  }
+  .data-vertical\:min-w-auto {
+    &:where([data-orientation="vertical"]) {
+      min-width: auto;
     }
   }
   .data-vertical\:flex-col {
