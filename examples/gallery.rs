@@ -182,6 +182,36 @@ fn TogglePage() -> Element {
                     "Outline"
                 }
             }
+            h1 { "Sizes" }
+            div { class: "flex items-end gap-1",
+                Toggle {
+                    size: ToggleSize::SM,
+                    value: toggled,
+                    on_value_change: handle_toggle,
+                    svg { view_box: "0 0 24 24", fill: "currentColor",
+                        path { d: "M0 0h24v24H0z" }
+                    }
+                    "SM"
+                }
+                Toggle {
+                    size: ToggleSize::Default,
+                    value: toggled,
+                    on_value_change: handle_toggle,
+                    svg { view_box: "0 0 24 24", fill: "currentColor",
+                        path { d: "M0 0h24v24H0z" }
+                    }
+                    "Default"
+                }
+                Toggle {
+                    size: ToggleSize::LG,
+                    value: toggled,
+                    on_value_change: handle_toggle,
+                    svg { view_box: "0 0 24 24", fill: "currentColor",
+                        path { d: "M0 0h24v24H0z" }
+                    }
+                    "LG"
+                }
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ use crate::variant_classes;
 variant_classes!(
     ToggleVariant,
     Default,
-    "bg-transparent",
+    "",
     Outline,
     "border-input hover:bg-muted border bg-transparent"
 );
@@ -46,8 +46,13 @@ pub fn Toggle(
         button {
             "data-toggle": "toggle",
             aria_pressed: if *value.read() { "true" } else { "false" },
-            "state": if *value.read() { "on" } else { "off" },
-            class: "hover:text-foreground aria-pressed:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[state=on]:bg-muted gap-1 rounded-md text-xs font-medium transition-all [&_svg:not([class*='size-'])]:size-3.5 group/toggle hover:bg-muted inline-flex items-center justify-center whitespace-nowrap outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+            class: "gap-1 rounded-sm text-xs font-medium transition-all [&_svg:not([class*='size-'])]:size-3.5 group/toggle inline-flex items-center justify-center whitespace-nowrap outline-none [&_svg]:shrink-0 [&_svg]:pointer-events-none select-none",
+            class: "disabled:pointer-events-none disabled:opacity-50",
+            class: "hover:border-view-decorationhover focus-visible:border-view-decorationfocus",
+            class: "focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-window-decorationfocus/5",
+            class: "aria-pressed:bg-view-decorationfocus/20 aria-pressed:border-view-decorationhover/50",
+            class: "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+            class: "bg-window-backgroundnormal border border-window-foregroundnormal/20",
             class: "{variant.class()}",
             class: "{size.class()}",
             class: "{class}",
