@@ -6,9 +6,18 @@ use dioxus::prelude::*;
 use crate::hooks::use_controlled;
 use crate::utils::nanoid;
 
+#[derive(Default, Clone, Copy, PartialEq)]
+pub enum SliderOrientation {
+    #[default]
+    Horizontal,
+    Vertical,
+}
+
 #[component]
 pub fn Slider(
     #[props(default)] class: String,
+
+    #[props(default)] orientation: Option<SliderOrientation>,
 
     #[props(default)] default_value: f32,
     #[props(default)] value: ReadSignal<Option<f32>>,
@@ -30,7 +39,7 @@ pub fn Slider(
 
     let thumb_id = use_signal(nanoid);
 
-    let mut slider_width: Signal<Option<f64>> = use_signal(Option::default);
+    let mut slider_size: Signal<Option<f64>> = use_signal(Option::default);
 
     let mut drag_start_position: Signal<Option<f64>> = use_signal(Option::default);
 
@@ -100,7 +109,11 @@ pub fn Slider(
     });
 
     let handle_pointerdown = use_callback(move |event: Event<PointerData>| {
-        drag_start_position.set(Some(event.client_coordinates().x));
+        if orientation == Some(SliderOrientation::Vertical) {
+            drag_start_position.set(Some(event.client_coordinates().y));
+        } else {
+            drag_start_position.set(Some(event.client_coordinates().x));
+        }
 
         let pointer_id = event.data().pointer_id();
 
@@ -123,7 +136,7 @@ pub fn Slider(
     });
 
     let handle_pointermove = use_callback(move |event: Event<PointerData>| {
-        let Some(slider_width) = *slider_width.read() else {
+        let Some(slider_size) = *slider_size.read() else {
             return;
         };
 
@@ -131,11 +144,15 @@ pub fn Slider(
             return;
         };
 
-        let slide_amount = event.client_coordinates().x - start;
+        let slide_amount = if orientation == Some(SliderOrientation::Vertical) {
+            start - event.client_coordinates().y
+        } else {
+            event.client_coordinates().x - start
+        };
 
         let value_range: f64 = (max - min).into();
 
-        let value_change = value_range * slide_amount / slider_width;
+        let value_change = value_range * slide_amount / slider_size;
 
         #[allow(clippy::cast_possible_truncation)]
         let new_value = (*value.read() + (value_change as f32)).clamp(min, max);
@@ -176,7 +193,11 @@ if (thumb && thumb.hasPointerCapture(pointerId)) {{
             return;
         };
 
-        slider_width.set(Some(size.width));
+        if orientation == Some(SliderOrientation::Vertical) {
+            slider_size.set(Some(size.height));
+        } else {
+            slider_size.set(Some(size.width));
+        }
     });
 
     let handle_thumb_mounted = use_callback(move |event: Event<MountedData>| {
@@ -190,40 +211,84 @@ if (thumb && thumb.hasPointerCapture(pointerId)) {{
     */
 
     rsx! {
-        span {
+        div {
             dir: "ltr",
-            "data-orientation": "horizontal",
+            "data-orientation": match orientation.unwrap_or_default() {
+                SliderOrientation::Horizontal => "horizontal",
+                SliderOrientation::Vertical => "vertical",
+            },
             aria_disabled: false,
             "data-slot": "slider",
-            class: "relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:h-full data-vertical:min-h-40 data-vertical:w-auto data-vertical:flex-col",
+            class: "relative flex touch-none items-center select-none min-w-40 m-1",
+            class: "data-vertical:min-h-40 data-vertical:min-w-auto data-vertical:w-auto data-vertical:flex-col",
+            class: "data-disabled:opacity-50",
             class: "{class}",
             onresize: handle_resize,
-            span {
-                "data-orientation": "horizontal",
+            div {
+                "data-orientation": match orientation.unwrap_or_default() {
+                    SliderOrientation::Horizontal => "horizontal",
+                    SliderOrientation::Vertical => "vertical",
+                },
                 "data-slot": "slider-track",
-                class: "relative grow overflow-hidden rounded-md bg-muted data-horizontal:h-1 data-horizontal:w-full data-vertical:h-full data-vertical:w-1",
-                span {
-                    "data-orientation": "horizontal",
+                class: "bg-window-decorationfocus/60",
+                class: "relative grow overflow-hidden rounded-full data-horizontal:h-1.25 data-horizontal:w-full data-vertical:h-full data-vertical:w-1.25",
+                div {
+                    "data-orientation": match orientation.unwrap_or_default() {
+                        SliderOrientation::Horizontal => "horizontal",
+                        SliderOrientation::Vertical => "vertical",
+                    },
                     "data-slot": "slider-range",
-                    class: "absolute bg-primary select-none data-horizontal:h-full data-vertical:w-full",
-                    style: "left: 0%; right: {100.0 - *display_position.read()}%",
+                    class: "bg-[color-mix(in_srgb,var(--color-window-foregroundnormal)_20%,var(--color-window-backgroundnormal))]",
+                    class: "border-[color-mix(in_srgb,var(--color-window-foregroundnormal)_40%,var(--color-window-backgroundnormal))]",
+                    class: "absolute  border-[0.5px]  rounded-full select-none data-horizontal:h-full data-vertical:w-full",
+                    style: match orientation.unwrap_or_default() {
+                        SliderOrientation::Horizontal => {
+                            format!("right: 0%; left: {}%", *display_position.read())
+                        }
+                        SliderOrientation::Vertical => {
+                            format!("top: 0%; bottom: {}%", *display_position.read())
+                        }
+                    },
                 }
             }
-            span {
+            div {
                 "data-slot": "slider-thumb",
-                style: "transform: translateX(-50%); position: absolute; left: calc({*display_position.read()}% + 0px);",
-                span {
+                style: match orientation.unwrap_or_default() {
+                    SliderOrientation::Horizontal => {
+                        format!(
+                            "transform: translateX(-50%); position: absolute; left: calc({}% + 0px);",
+                            *display_position.read(),
+                        )
+                    }
+                    SliderOrientation::Vertical => {
+                        format!(
+                            "transform: translateY(50%); position: absolute; bottom: calc({}% + 0px);",
+                            *display_position.read(),
+                        )
+                    }
+                },
+                div {
                     id: thumb_id,
                     role: "slider",
                     tabindex: "0",
                     aria_valuemin: min,
                     aria_valuemax: max,
-                    aria_orientation: "horizontal",
+                    aria_orientation: match orientation.unwrap_or_default() {
+                        SliderOrientation::Horizontal => "horizontal",
+                        SliderOrientation::Vertical => "vertical",
+                    },
                     aria_valuenow: *value.read(),
-                    "data-orientation": "horizontal",
+                    "data-orientation": match orientation.unwrap_or_default() {
+                        SliderOrientation::Horizontal => "horizontal",
+                        SliderOrientation::Vertical => "vertical",
+                    },
                     "data-slot": "slider-thumb",
                     "data-radix-collection-item": "",
-                    class: "relative block size-3 shrink-0 rounded-md border border-ring bg-white ring-ring/30 transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-2 focus-visible:ring-2 focus-visible:outline-hidden active:ring-2 disabled:pointer-events-none disabled:opacity-50",
+                    class: "ring-window-foregroundnormal/5 border-window-foregroundnormal/30 bg-window-backgroundnormal",
+                    class: "hover:ring-1 hover:border-window-decorationhover focus-visible:ring-1 focus-visible:outline-hidden active:ring-1",
+                    class: "disabled:pointer-events-none disabled:opacity-50",
+                    class: "after:absolute after:-inset-2",
+                    class: "relative block size-4.5 shrink-0 rounded-full border transition-[color,box-shadow] select-none",
                     onmounted: handle_thumb_mounted,
                     onkeydown: handle_keydown,
                     onpointerdown: handle_pointerdown,

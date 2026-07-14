@@ -9,7 +9,8 @@ enum PageTypes {
     #[default]
     Button,
     TextInput,
-    Toggle
+    Toggle,
+    Slider,
 }
 
 #[component]
@@ -33,6 +34,11 @@ fn Pages() -> Element {
                 on_value_change: move |_| current_page.set(PageTypes::Toggle),
                 "Toggle"
             }
+            Toggle {
+                value: *current_page.read() == PageTypes::Slider,
+                on_value_change: move |_| current_page.set(PageTypes::Slider),
+                "Slider"
+            }
         }
         div { class: "grow flex flex-col h-full w-full",
             {
@@ -45,6 +51,9 @@ fn Pages() -> Element {
                     },
                     PageTypes::Toggle => rsx! {
                         TogglePage {}
+                    },
+                    PageTypes::Slider => rsx! {
+                        SliderPage {}
                     },
                 }
             }
@@ -97,7 +106,7 @@ fn ButtonPage() -> Element {
                     }
                     "LG"
                 }
-            
+
             }
             div { class: "flex flex-wrap gap-1 items-end",
                 "IconXS"
@@ -212,6 +221,29 @@ fn TogglePage() -> Element {
                     "LG"
                 }
             }
+        }
+    }
+}
+
+#[component]
+fn SliderPage() -> Element {
+    let mut value = use_signal(|| Some(50f32));
+
+    rsx! {
+        div { class: "flex flex-col items-start p-4 gap-4",
+            "value: {value.read().unwrap_or_default()}"
+            Slider {
+                class: "",
+                value,
+                on_value_change: move |new_value| value.set(Some(new_value)),
+            }
+            Slider {
+                class: "",
+                value,
+                on_value_change: move |new_value| value.set(Some(new_value)),
+                orientation: SliderOrientation::Vertical,
+            }
+
         }
     }
 }
