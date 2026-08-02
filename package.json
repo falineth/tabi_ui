@@ -1,5 +1,5 @@
 {
-  "name": "tabi_ui",
+  "name": "tabi-ui",
   "version": "0.8.0",
   "description": "Reusable Dioxus components",
   "type": "module",
@@ -28,7 +28,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/falineth/tabi_ui.git"
+    "url": "https://github.com/falineth/tabi-ui.git"
   },
   "dependencies": {
     "shadcn": "4.16.0",
